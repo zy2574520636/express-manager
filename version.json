@@ -1,12 +1,12 @@
 {
-  "versionCode": 22,
-  "versionName": "1.8.0",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
+  "versionCode": 23,
+  "versionName": "1.8.1",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.1/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.1/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.1/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.1/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.1/express-manager.apk"
   ],
-  "changelog": "✨ 快递卡片大改版 + 返回键支持\n\n1. 快递卡片精简：移除底部详情/编辑/删除按钮，点击卡片看详情\n2. 取件码右上角显示录入时间，更紧凑\n3. 左滑删除（红色背景），右滑签收（绿色背景）\n4. 没有待取件的驿站显示精简卡片（0待取件）\n5. 设置里模拟测试模块默认收起，更清爽\n6. 支持手机返回键/手势返回，逐层关闭弹窗"
+  "changelog": "🎨 滑动背景默认色改为蓝色\n\n1. 滑动背景默认显示蓝色（与顶部蓝条一致）\n2. 滑到位时左边变绿（签收）、右边变红（删除）\n3. 增加颜色过渡动画，更顺滑"
 }

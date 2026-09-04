@@ -871,24 +871,26 @@ body.station-edit-mode {
 }
 .swipe-bg-left {
   left: 0;
-  background: linear-gradient(90deg, #10b981, #059669);
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
   padding-left: 24px;
   justify-content: flex-start;
+  transition: background 0.2s;
 }
 .swipe-bg-right {
   right: 0;
-  background: linear-gradient(-90deg, #ef4444, #dc2626);
+  background: linear-gradient(-90deg, var(--primary), var(--primary-light));
   padding-right: 24px;
   justify-content: flex-end;
+  transition: background 0.2s;
 }
 .swipe-bg.ready {
   opacity: 1;
 }
 .swipe-bg-left.ready {
-  background: linear-gradient(90deg, #059669, #047857);
+  background: linear-gradient(90deg, #10b981, #059669);
 }
 .swipe-bg-right.ready {
-  background: linear-gradient(-90deg, #dc2626, #b91c1c);
+  background: linear-gradient(-90deg, #ef4444, #dc2626);
 }
 .swipe-bg.ready .swipe-bg-text {
   transform: scale(1.1);
