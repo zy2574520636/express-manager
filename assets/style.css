@@ -642,6 +642,9 @@ body {
 .station-edit-mode .station-card-compact {
   padding-left: 44px !important;
 }
+body.station-edit-mode {
+  padding-bottom: 80px;
+}
 
 /* 驿站编辑底部操作栏 */
 .station-edit-bar {
@@ -1878,6 +1881,34 @@ body {
 }
 .update-modal-footer .btn {
   flex: 1;
+}
+
+/* 下载进度条 */
+.update-progress-wrap {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+}
+.update-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.update-progress-bar {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.update-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.3s ease;
 }
 
 /* ===== 响应式 ===== */

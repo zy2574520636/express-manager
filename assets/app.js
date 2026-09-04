@@ -2271,13 +2271,41 @@
     }
 
     if (window.AndroidBridge && typeof window.AndroidBridge.downloadUpdate === 'function') {
+      // APP内下载，显示进度条
+      const progressWrap = document.getElementById('update-progress-wrap');
+      const btnUpdate = document.getElementById('btn-update-now');
+      if (progressWrap) progressWrap.style.display = 'block';
+      if (btnUpdate) {
+        btnUpdate.textContent = '下载中...';
+        btnUpdate.disabled = true;
+      }
       window.AndroidBridge.downloadUpdate(latestUpdateInfo.apkUrl);
     } else {
       // 网页版直接跳转
       window.open(latestUpdateInfo.apkUrl, '_blank');
+      closeUpdateModal();
     }
-    closeUpdateModal();
   }
+
+  // 下载进度回调（由原生层调用）
+  window.onDownloadProgress = function(progress, done, failed) {
+    const progressFill = document.getElementById('update-progress-fill');
+    const progressText = document.getElementById('update-progress-text');
+    const btnUpdate = document.getElementById('btn-update-now');
+
+    if (progressFill) progressFill.style.width = progress + '%';
+    if (progressText) progressText.textContent = progress + '%';
+
+    if (failed) {
+      showToast('下载失败', 'error');
+      if (btnUpdate) {
+        btnUpdate.textContent = '立即更新';
+        btnUpdate.disabled = false;
+      }
+      const progressWrap = document.getElementById('update-progress-wrap');
+      if (progressWrap) progressWrap.style.display = 'none';
+    }
+  };
 
   // 启动时自动检查更新（每24小时最多自动检查一次）
   function autoCheckUpdate() {
@@ -2622,7 +2650,7 @@
         <button class="btn btn-sm btn-outline" id="station-edit-select-all">全选</button>
         <span class="station-edit-count">已选 0 个</span>
         <button class="btn btn-sm btn-danger" id="station-edit-hide-btn">隐藏选中</button>
-        <button class="btn btn-sm" id="station-edit-cancel">完成</button>
+        <button class="btn btn-sm btn-secondary" id="station-edit-cancel">完成</button>
       `;
       document.body.appendChild(bar);
     }
