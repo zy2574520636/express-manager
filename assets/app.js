@@ -106,9 +106,9 @@
       }
     }
 
-    // 模式3：存放XXX
+    // 模式3：存放/存入XXX
     if (stationCandidates.length === 0) {
-      m = t.match(/(?:存放|放至|放在|放到|已放入|放入)(.+?)(?:，|。|；|取件码|凭|$)/);
+      m = t.match(/(?:存放|放至|放在|放到|已放入|放入|存入|已存入|存放在|存至)(.+?)(?:，|。|；|取件码|凭|$)/);
       if (m) {
         const candidate = m[1].trim();
         if (isLikelyStation(candidate)) {
@@ -130,12 +130,22 @@
 
     // 模式5：包含驿站/店/喵站/超市/代收点/自提点关键词的短语
     if (stationCandidates.length === 0) {
-      m = t.match(/([\u4e00-\u9fa5A-Za-z0-9\-·\s]+?(?:驿站|店|喵站|快递超市|超市|代收点|自提点|服务中心))/);
-      if (m) {
-        const candidate = m[1].trim();
-        if (isLikelyStation(candidate)) {
-          stationCandidates.push(candidate);
+      // 找最后一个驿站关键词，向前提取（驿站名通常在句子后半部分）
+      let lastMatch = null;
+      const regex = /([\u4e00-\u9fa5A-Za-z0-9\-·]+?(?:驿站|店|喵站|快递超市|超市|代收点|自提点|服务中心))/g;
+      let match;
+      while ((match = regex.exec(t)) !== null) {
+        lastMatch = match[1].trim();
+      }
+      if (lastMatch && isLikelyStation(lastMatch)) {
+        // 清洗：如果前面包含"快递"、"您的"等明显不属于驿站名的词，从最后一个动词后面截断
+        let cleaned = lastMatch;
+        // 找最后一个"的/已/入/放/存/到"，从它后面开始取
+        const verbMatch = lastMatch.match(/.*(的|已|入|放|存|到)(.+)/);
+        if (verbMatch && verbMatch[2] && isLikelyStation(verbMatch[2].trim())) {
+          cleaned = verbMatch[2].trim();
         }
+        stationCandidates.push(cleaned);
       }
     }
 
@@ -668,7 +678,7 @@
 
     const pickupCodeHtml = p.pickupCode ? `
       <div class="pickup-code-box" data-action="copy-code" data-code="${escapeHtml(p.pickupCode)}" title="点击复制取件码">
-        <span class="pickup-code-label">📮 取件码</span>
+        <span class="pickup-code-label">取件码</span>
         <span class="pickup-code-date">${addDateStr}</span>
         <span class="pickup-code-value">${escapeHtml(p.pickupCode)}</span>
       </div>
@@ -1508,7 +1518,7 @@
 
     const pickupCodeSection = p.pickupCode ? `
       <div class="detail-pickup-code">
-        <div class="label">📮 取件码</div>
+        <div class="label">取件码</div>
         <div class="code">${escapeHtml(p.pickupCode)}</div>
       </div>
     ` : '';
@@ -1526,7 +1536,7 @@
 
     els.detailContent.innerHTML = `
       <div style="margin-bottom:16px;">
-        <h3 style="font-size:18px;margin-bottom:8px;">${escapeHtml(p.itemName)}</h3>
+        <h3 id="detail-title" style="font-size:18px;margin-bottom:8px;cursor:pointer;display:inline-block;padding:4px 8px;margin:-4px -8px;border-radius:6px;" title="点击修改">${escapeHtml(p.itemName)} <span style="font-size:12px;color:var(--muted);font-weight:normal;">✏️</span></h3>
         <span class="status-badge status-${escapeHtml(p.status)}" style="font-size:14px;padding:6px 14px;">${escapeHtml(p.status)}</span>
       </div>
 
@@ -1534,10 +1544,6 @@
 
       ${stationSection}
 
-      <div class="detail-item">
-        <div class="detail-label">快递公司</div>
-        <div class="detail-value">${escapeHtml(p.carrier) || '-'}</div>
-      </div>
       <div class="detail-item">
         <div class="detail-label">快递单号</div>
         <div class="detail-value" style="font-family:monospace;">${escapeHtml(p.trackingNumber) || '-'}</div>
@@ -1566,6 +1572,45 @@
         <button class="btn btn-secondary btn-sm" onclick="window.deleteFromDetail('${p.id}')">🗑 删除</button>
       </div>
     `;
+
+    // 点击标题修改快递名称（内联编辑）
+    const detailTitle = document.getElementById('detail-title');
+    if (detailTitle) {
+      detailTitle.addEventListener('click', () => {
+        if (detailTitle.querySelector('input')) return; // 已经在编辑了
+        const oldName = p.itemName;
+        detailTitle.innerHTML = `<input type="text" id="detail-title-input" value="${escapeHtml(oldName)}" style="font-size:18px;font-weight:bold;border:1px solid var(--primary);border-radius:6px;padding:4px 8px;outline:none;width:100%;box-sizing:border-box;">`;
+        const input = document.getElementById('detail-title-input');
+        input.focus();
+        input.select();
+        
+        const saveEdit = () => {
+          const newName = input.value.trim();
+          if (newName && newName !== oldName) {
+            const idx = parcels.findIndex(x => x.id === p.id);
+            if (idx !== -1) {
+              parcels[idx].itemName = newName;
+              parcels[idx].updatedAt = Date.now();
+              saveData();
+              renderAll();
+              showToast('名称已更新', 'success');
+            }
+          }
+          // 恢复显示
+          detailTitle.innerHTML = `${escapeHtml(newName || oldName)} <span style="font-size:12px;color:var(--muted);font-weight:normal;">✏️</span>`;
+        };
+        
+        input.addEventListener('blur', saveEdit);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            input.blur();
+          } else if (e.key === 'Escape') {
+            input.value = oldName;
+            input.blur();
+          }
+        });
+      });
+    }
 
     els.detailOverlay.style.display = 'flex';
   }

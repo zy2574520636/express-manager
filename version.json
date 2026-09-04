@@ -1,12 +1,12 @@
 {
-  "versionCode": 24,
-  "versionName": "1.8.2",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.2/express-manager.apk",
+  "versionCode": 25,
+  "versionName": "1.8.3",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.3/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.2/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.2/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.2/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.2/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.3/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.3/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.3/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.3/express-manager.apk"
   ],
-  "changelog": "🎨 卡片视觉大优化 + 隐藏导出\n\n1. 删除快递卡片左侧彩色竖条，更简洁\n2. 取件码卡片调为淡灰色，取件码数字用蓝色突出\n3. 删除卡片上重复的快递公司行（顶部已有大标题）\n4. 隐藏导出功能（暂不开放）\n5. 更新使用说明文档"
+  "changelog": "🐛 修复识别bug + 详情页点击改名称\n\n1. 修复取件码标签图标显示异常（去掉emoji，改用纯文字）\n2. 修复驿站名称识别错误：支持\"存入/已存入\"格式，避免整句话都塞进驿站名\n3. 详情页删除重复的快递公司行（顶部标题已显示）\n4. 新增：详情页点击顶部标题可直接修改快递名称"
 }
