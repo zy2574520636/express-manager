@@ -1,12 +1,12 @@
 {
-  "versionCode": 13,
-  "versionName": "1.4.3",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
+  "versionCode": 14,
+  "versionName": "1.5.0",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk"
   ],
-  "changelog": "🔧 优化驿站管理模式复选框\n\n1. 加大复选框尺寸（22px → 26px），更容易点击\n2. 提高复选框层级（z-index 10 → 999），确保不被遮挡\n3. 复选框增加阴影效果，更醒目\n4. 点击时有缩放反馈，确认点击生效"
+  "changelog": "✨ 驿站管理改为弹窗模式\n\n1. 驿站管理改为弹窗形式，点「管理」按钮打开弹窗\n2. 弹窗里清晰列出所有驿站，只显示驿站信息不带快递详情\n3. 每个驿站右边有「隐藏」/「恢复显示」按钮，操作更直观\n4. 管理按钮从齿轮图标改为「管理」文字，避免和设置重复\n5. 显示每个驿站的总包裹数和待取件数"
 }

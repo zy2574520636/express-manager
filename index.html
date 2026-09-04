@@ -60,7 +60,7 @@
     <div class="section-header">
       <h2>📋 驿站包裹</h2>
       <div class="section-header-right">
-        <button class="btn btn-sm btn-ghost btn-icon" id="btn-station-manage" title="管理驿站">⚙️</button>
+        <button class="btn btn-sm btn-outline" id="btn-station-manage">管理</button>
         <select id="sort-by" class="select-input select-sm">
           <option value="pickup_count">待取件最多</option>
           <option value="created_desc">最新添加</option>
@@ -512,6 +512,27 @@
             <p>设置里可以模拟收到短信/通知，不用真的等快递</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 驿站管理弹窗 -->
+<div class="modal-overlay" id="station-manage-modal" style="display:none">
+  <div class="modal" style="max-width:480px;max-height:80vh;display:flex;flex-direction:column;">
+    <div class="modal-header">
+      <h3>🏪 驿站管理</h3>
+      <button class="modal-close" id="station-manage-close">✕</button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;flex:1;">
+      <div class="station-manage-tip" style="font-size:13px;color:var(--muted);margin-bottom:12px;">
+        隐藏驿站后，该驿站的快递不会被删除，下次收到新快递时会自动恢复显示
+      </div>
+      <div id="station-manage-popup-list" class="station-manage-popup-list">
+        <!-- 动态生成驿站列表 -->
+      </div>
+      <div id="station-manage-popup-empty" style="text-align:center;padding:30px;color:var(--muted);font-size:13px;display:none;">
+        暂无驿站记录
       </div>
     </div>
   </div>

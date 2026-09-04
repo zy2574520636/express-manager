@@ -1622,7 +1622,7 @@
     }
     if (els.btnStationManage) {
       els.btnStationManage.addEventListener('click', () => {
-        enterStationEditMode();
+        openStationManagePopup();
       });
     }
 
@@ -1923,6 +1923,16 @@
     if (settingsModal) {
       settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) closeSettingsModal();
+      });
+    }
+
+    // 驿站管理弹窗
+    const stationManageClose = document.getElementById('station-manage-close');
+    if (stationManageClose) stationManageClose.addEventListener('click', closeStationManagePopup);
+    const stationManageModal = document.getElementById('station-manage-modal');
+    if (stationManageModal) {
+      stationManageModal.addEventListener('click', (e) => {
+        if (e.target === stationManageModal) closeStationManagePopup();
       });
     }
 
@@ -2629,141 +2639,123 @@
     showToast(checked ? '已全选' : '已全部取消', 'success');
   }
 
-  // ===== 驿站隐藏/编辑模式 =====
-  let stationEditMode = false;
-  let selectedStationsForHide = new Set();
+  // ===== 驿站管理弹窗 =====
+  /**
+   * 打开驿站管理弹窗
+   */
+  function openStationManagePopup() {
+    const modal = document.getElementById('station-manage-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    renderStationManagePopupList();
+  }
 
   /**
-   * 进入驿站编辑模式（长按触发）
+   * 关闭驿站管理弹窗
    */
-  function enterStationEditMode() {
-    stationEditMode = true;
-    selectedStationsForHide.clear();
-    document.body.classList.add('station-edit-mode');
-    // 给所有驿站卡片加复选框
-    const cards = document.querySelectorAll('.station-card');
-    if (cards.length === 0) {
-      showToast('暂无可管理的驿站', 'warning');
-      exitStationEditMode();
+  function closeStationManagePopup() {
+    const modal = document.getElementById('station-manage-modal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  /**
+   * 渲染驿站管理弹窗里的列表
+   */
+  function renderStationManagePopupList() {
+    const listEl = document.getElementById('station-manage-popup-list');
+    const emptyEl = document.getElementById('station-manage-popup-empty');
+    if (!listEl) return;
+
+    const allStations = getAllStationsWithCount();
+    const visibleStations = allStations.filter(s =>
+      !settings.hiddenStations || !settings.hiddenStations.includes(s.name));
+    const hiddenStations = allStations.filter(s =>
+      settings.hiddenStations && settings.hiddenStations.includes(s.name));
+
+    if (allStations.length === 0) {
+      listEl.innerHTML = '';
+      if (emptyEl) emptyEl.style.display = 'block';
       return;
     }
-    cards.forEach(card => {
-      const stationName = decodeURIComponent(card.dataset.station || '');
-      if (!stationName) return;
-      const checkbox = document.createElement('div');
-      checkbox.className = 'station-edit-checkbox';
-      checkbox.innerHTML = '<div class="station-checkbox-inner"></div>';
-      checkbox.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleStationSelect(stationName, checkbox);
-      });
-      card.prepend(checkbox);
-    });
-    // 显示底部操作栏
-    showStationEditBar();
-    showToast('已进入管理模式，勾选驿站后点"隐藏选中"', 'info');
-  }
+    if (emptyEl) emptyEl.style.display = 'none';
 
-  function toggleStationSelect(stationName, checkboxEl) {
-    if (selectedStationsForHide.has(stationName)) {
-      selectedStationsForHide.delete(stationName);
-      checkboxEl.classList.remove('checked');
-    } else {
-      selectedStationsForHide.add(stationName);
-      checkboxEl.classList.add('checked');
+    let html = '';
+
+    // 显示中的驿站
+    if (visibleStations.length > 0) {
+      html += `<div class="station-manage-section-title">显示中的驿站（${visibleStations.length}）</div>`;
+      html += visibleStations.map(s => {
+        return `
+          <div class="station-manage-item">
+            <div class="station-manage-info">
+              <div class="station-manage-name">🏪 ${escapeHtml(s.name)}</div>
+              <div class="station-manage-meta">共 ${s.count} 个包裹 · 待取 ${s.pickupCount} 件</div>
+            </div>
+            <div class="station-manage-actions">
+              <button class="station-manage-btn btn-warn" data-action="popup-hide" data-name="${encodeURIComponent(s.name)}">
+                隐藏
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
-    updateStationEditBar();
-  }
 
-  function exitStationEditMode() {
-    stationEditMode = false;
-    selectedStationsForHide.clear();
-    document.body.classList.remove('station-edit-mode');
-    document.querySelectorAll('.station-edit-checkbox').forEach(el => el.remove());
-    hideStationEditBar();
-  }
-
-  function showStationEditBar() {
-    let bar = document.getElementById('station-edit-bar');
-    if (!bar) {
-      bar = document.createElement('div');
-      bar.id = 'station-edit-bar';
-      bar.className = 'station-edit-bar';
-      bar.innerHTML = `
-        <button class="btn btn-sm btn-outline" id="station-edit-select-all">全选</button>
-        <span class="station-edit-count">已选 0 个</span>
-        <button class="btn btn-sm btn-danger" id="station-edit-hide-btn">隐藏选中</button>
-        <button class="btn btn-sm btn-secondary" id="station-edit-cancel">完成</button>
-      `;
-      document.body.appendChild(bar);
+    // 已隐藏的驿站
+    if (hiddenStations.length > 0) {
+      html += `<div class="station-manage-section-title">已隐藏的驿站（${hiddenStations.length}）</div>`;
+      html += hiddenStations.map(s => {
+        return `
+          <div class="station-manage-item station-hidden-item">
+            <div class="station-manage-info">
+              <div class="station-manage-name">🏪 ${escapeHtml(s.name)}</div>
+              <div class="station-manage-meta">共 ${s.count} 个包裹 · 待取 ${s.pickupCount} 件</div>
+            </div>
+            <div class="station-manage-actions">
+              <button class="station-manage-btn btn-primary" data-action="popup-unhide" data-name="${encodeURIComponent(s.name)}">
+                恢复显示
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
-    bar.style.display = 'flex';
-    bar.querySelector('#station-edit-select-all').onclick = () => {
-      const allStations = [];
-      document.querySelectorAll('.station-card').forEach(card => {
-        const name = decodeURIComponent(card.dataset.station || '');
-        if (name) allStations.push(name);
-      });
-      const allSelected = allStations.every(s => selectedStationsForHide.has(s));
-      document.querySelectorAll('.station-card').forEach(card => {
-        const name = decodeURIComponent(card.dataset.station || '');
-        const checkbox = card.querySelector('.station-edit-checkbox');
-        if (!name || !checkbox) return;
-        if (allSelected) {
-          selectedStationsForHide.delete(name);
-          checkbox.classList.remove('checked');
-        } else {
-          selectedStationsForHide.add(name);
-          checkbox.classList.add('checked');
+
+    listEl.innerHTML = html;
+
+    // 绑定隐藏按钮
+    listEl.querySelectorAll('[data-action="popup-hide"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const stationName = decodeURIComponent(btn.dataset.name);
+        const station = allStations.find(s => s.name === stationName);
+        const pendingCount = station ? station.pickupCount || 0 : 0;
+
+        let confirmMsg = `确定要隐藏「${stationName}」吗？\n\n（数据不会删除，下次收到新快递时会自动恢复）`;
+        if (pendingCount > 0) {
+          confirmMsg = `⚠️ 该驿站还有 ${pendingCount} 个待取件！\n\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
         }
-      });
-      updateStationEditBar();
-    };
-    bar.querySelector('#station-edit-hide-btn').onclick = () => {
-      if (selectedStationsForHide.size === 0) {
-        showToast('请先选择要隐藏的驿站', 'warning');
-        return;
-      }
-      // 统计选中的驿站中有多少个有待取件
-      let pendingCount = 0;
-      const allStations = groupByStation(parcels);
-      selectedStationsForHide.forEach(name => {
-        const s = allStations.find(st => st.name === name);
-        if (s && s.pickupCount > 0) pendingCount += s.pickupCount;
-      });
 
-      let confirmMsg = `确定要隐藏选中的 ${selectedStationsForHide.size} 个驿站吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
-      if (pendingCount > 0) {
-        confirmMsg = `⚠️ 选中的驿站里还有 ${pendingCount} 个待取件！\n\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
-      }
-
-      showConfirmDialog(confirmMsg, () => {
-        if (!settings.hiddenStations) settings.hiddenStations = [];
-        selectedStationsForHide.forEach(name => {
-          if (!settings.hiddenStations.includes(name)) {
-            settings.hiddenStations.push(name);
+        showConfirmDialog(confirmMsg, () => {
+          if (!settings.hiddenStations) settings.hiddenStations = [];
+          if (!settings.hiddenStations.includes(stationName)) {
+            settings.hiddenStations.push(stationName);
           }
+          saveSettings();
+          renderStationManagePopupList();
+          renderAll();
+          showToast('已隐藏', 'success');
         });
-        saveSettings();
-        exitStationEditMode();
-        renderAll();
-        showToast(`已隐藏 ${selectedStationsForHide.size} 个驿站`, 'success');
       });
-    };
-    bar.querySelector('#station-edit-cancel').onclick = () => {
-      exitStationEditMode();
-    };
-    updateStationEditBar();
-  }
+    });
 
-  function hideStationEditBar() {
-    const bar = document.getElementById('station-edit-bar');
-    if (bar) bar.style.display = 'none';
-  }
-
-  function updateStationEditBar() {
-    const countEl = document.querySelector('.station-edit-count');
-    if (countEl) countEl.textContent = `已选 ${selectedStationsForHide.size} 个`;
+    // 绑定恢复按钮
+    listEl.querySelectorAll('[data-action="popup-unhide"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const stationName = decodeURIComponent(btn.dataset.name);
+        unhideStation(stationName);
+        renderStationManagePopupList();
+      });
+    });
   }
 
   /**
@@ -2792,10 +2784,14 @@
         stationMap[key] = {
           name: getStationName(p),
           count: 0,
+          pickupCount: 0,
+          completedCount: 0,
           aliases: [] // 被合并进来的别名
         };
       }
       stationMap[key].count++;
+      if (p.status === '待取件') stationMap[key].pickupCount++;
+      if (p.status === '已取件' || p.status === '已签收') stationMap[key].completedCount++;
     });
 
     // 找出哪些别名被映射到了这个标准驿站
