@@ -1786,67 +1786,6 @@
       swipingCard = null;
     }
 
-    // ===== 驿站卡片长按进入编辑模式 =====
-    let stationPressCard = null;
-    let stationPressTimer = null;
-    let stationPressTriggered = false;
-    let stationPressMoved = false;
-    let stationPressStartX = 0, stationPressStartY = 0;
-
-    function onStationLongPressStart(e, x, y) {
-      // 编辑模式下不处理
-      if (stationEditMode) return;
-      const stationCard = e.target.closest('.station-card');
-      if (!stationCard) return;
-      // 如果长按的是包裹卡片，不处理（交给快递长按菜单）
-      if (e.target.closest('.parcel-card')) return;
-
-      stationPressCard = stationCard;
-      stationPressStartX = x;
-      stationPressStartY = y;
-      stationPressMoved = false;
-      stationPressTriggered = false;
-
-      stationPressTimer = setTimeout(() => {
-        if (!stationPressMoved && stationPressCard) {
-          stationPressTriggered = true;
-          enterStationEditMode();
-          vibrate([20]);
-        }
-      }, 500);
-    }
-
-    function onStationLongPressMove(e, x, y) {
-      if (!stationPressCard || stationPressTriggered) return;
-      const dx = x - stationPressStartX;
-      const dy = y - stationPressStartY;
-      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-        stationPressMoved = true;
-        if (stationPressTimer) {
-          clearTimeout(stationPressTimer);
-          stationPressTimer = null;
-        }
-      }
-    }
-
-    function onStationLongPressEnd(e) {
-      if (stationPressTimer) {
-        clearTimeout(stationPressTimer);
-        stationPressTimer = null;
-      }
-      stationPressCard = null;
-    }
-
-    // 点击空白处退出编辑模式
-    document.addEventListener('click', (e) => {
-      if (!stationEditMode) return;
-      if (e.target.closest('.station-edit-bar')) return;
-      if (e.target.closest('.station-edit-checkbox')) return;
-      // 点击驿站卡片不退出（用于选择）
-      if (e.target.closest('.station-card')) return;
-      exitStationEditMode();
-    });
-
     // 导入导出
 
     function resetSwipe(card) {

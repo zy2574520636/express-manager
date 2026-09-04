@@ -1,12 +1,12 @@
 {
-  "versionCode": 15,
-  "versionName": "1.5.1",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
+  "versionCode": 16,
+  "versionName": "1.5.2",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.2/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.2/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.2/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.2/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.5.2/express-manager.apk"
   ],
-  "changelog": "🐛 修复驿站管理隐藏按钮无反应的问题\n\n1. 修复隐藏按钮调用不存在的函数导致点击无反应的问题\n2. 改为使用系统确认对话框，点击隐藏后会弹出确认提示\n3. 同时修复了设置页中驿站管理的相同问题"
+  "changelog": "🧹 清理旧代码，修复潜在报错\n\n1. 清理了已删除的编辑模式残留代码（长按触发、点击空白退出等）\n2. 避免用户不小心长按驿站卡片导致JS报错\n3. 全面检查了所有函数引用，确保没有未定义的函数调用"
 }
