@@ -1,6 +1,6 @@
 {
   "versionCode": 3,
-  "versionName": "1.2.0",
-  "apkUrl": "https://github.com/zy2574520636/express-manager/releases/download/v1.2.0/express-manager.apk",
-  "changelog": "1. 驿站取完后保留精简卡片，不再消失\n2. 驿站长按进入编辑模式，可勾选隐藏\n3. 设置中新增驿站管理，可恢复已隐藏驿站\n4. 隐藏驿站收到新快递时自动恢复显示\n5. 新增APP自动更新检测功能\n6. 优化页面底部留白"
+  "versionName": "1.2.1",
+  "apkUrl": "https://github.com/zy2574520636/express-manager/releases/download/v1.2.1/express-manager.apk",
+  "changelog": "1. 驿站取完后保留精简卡片，不再消失\n2. 驿站管理改为按钮触发（点击管理按钮进入编辑）\n3. 设置中新增驿站管理，可恢复已隐藏驿站\n4. 隐藏驿站收到新快递时自动恢复显示\n5. 新增APP自动更新检测功能\n6. 修复版本号不匹配问题"
 }

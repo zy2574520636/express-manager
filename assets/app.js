@@ -333,6 +333,7 @@
     els.filterStatus = document.getElementById('filter-status');
     els.sortBy = document.getElementById('sort-by');
     els.stationCount = document.getElementById('station-count');
+    els.btnStationManage = document.getElementById('btn-station-manage');
     els.todayOverview = document.getElementById('today-overview');
     els.todayCount = document.getElementById('today-count');
     els.todayDesc = document.getElementById('today-desc');
@@ -1617,6 +1618,11 @@
     if (els.sortBy) {
       els.sortBy.addEventListener('change', renderParcelList);
     }
+    if (els.btnStationManage) {
+      els.btnStationManage.addEventListener('click', () => {
+        enterStationEditMode();
+      });
+    }
 
     // 驿站列表事件委托
     els.stationList.addEventListener('click', (e) => {
@@ -1853,21 +1859,18 @@
     els.stationList.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
       onSwipeStart(e, e.touches[0].clientX, e.touches[0].clientY);
-      onStationLongPressStart(e, e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
 
     els.stationList.addEventListener('touchmove', (e) => {
       if (!isSwiping || !swipingCard) return;
       if (e.touches.length !== 1) return;
       onSwipeMove(e, e.touches[0].clientX, e.touches[0].clientY);
-      onStationLongPressMove(e, e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: false });
 
     els.stationList.addEventListener('touchend', (e) => {
       if (!isSwiping || !swipingCard) return;
       const touch = e.changedTouches[0];
       onSwipeEnd(e, touch.clientX);
-      onStationLongPressEnd(e);
     });
 
     // 鼠标事件（桌面端调试用）
@@ -1876,20 +1879,17 @@
       if (e.button !== 0) return;
       mouseDown = true;
       onSwipeStart(e, e.clientX, e.clientY);
-      onStationLongPressStart(e, e.clientX, e.clientY);
     });
 
     document.addEventListener('mousemove', (e) => {
       if (!mouseDown) return;
       onSwipeMove(e, e.clientX, e.clientY);
-      onStationLongPressMove(e, e.clientX, e.clientY);
     });
 
     document.addEventListener('mouseup', (e) => {
       if (!mouseDown) return;
       mouseDown = false;
       onSwipeEnd(e, e.clientX);
-      onStationLongPressEnd(e);
     });
 
     // 导入导出
