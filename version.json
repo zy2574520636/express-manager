@@ -1,12 +1,12 @@
 {
-  "versionCode": 11,
-  "versionName": "1.4.1",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.1/express-manager.apk",
+  "versionCode": 12,
+  "versionName": "1.4.2",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.1/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.1/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.1/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.4.1/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk"
   ],
-  "changelog": "重要：本次更新更换了应用签名，请先卸载旧版本再安装！\n\n1. 修复下载完成后按钮卡死问题，安装失败可重试\n2. 下载完成后按钮变为「安装」，点击可重新安装（无需重新下载）\n3. 统一应用签名，后续更新可正常覆盖安装\n4. 新增国内加速下载源（3个镜像站），下载慢自动切换\n5. 延长下载超时时间，更稳定"
+  "changelog": "🐛 修复驿站列表空白的问题\n\n1. 修复HTML缺少元素导致渲染报错，驿站列表空白不显示的问题\n2. 给所有DOM元素访问加上空值保护，避免单个元素缺失导致整个页面崩溃\n3. 模拟按钮点击后会正确显示toast提示"
 }

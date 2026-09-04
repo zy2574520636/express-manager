@@ -725,7 +725,7 @@
     const count = pendingParcelsList.length;
 
     if (count === 0) {
-      els.todayOverview.style.display = 'none';
+      if (els.todayOverview) els.todayOverview.style.display = 'none';
       return;
     }
 
@@ -737,9 +737,9 @@
     });
     const stationCount = Object.keys(stationMap).length;
 
-    els.todayOverview.style.display = 'flex';
-    els.todayCount.textContent = count;
-    els.todayDesc.textContent = `${stationCount} 个驿站待取`;
+    if (els.todayOverview) els.todayOverview.style.display = 'flex';
+    if (els.todayCount) els.todayCount.textContent = count;
+    if (els.todayDesc) els.todayDesc.textContent = `${stationCount} 个驿站待取`;
   }
 
   // ===== 待确认快递 =====
@@ -873,34 +873,36 @@
     const completedParcels = filtered.filter(p => p.status === '已取件' || p.status === '已签收');
 
     if (completedParcels.length === 0) {
-      els.completedSection.style.display = 'none';
+      if (els.completedSection) els.completedSection.style.display = 'none';
       return;
     }
 
     // 按完成时间倒序
     completedParcels.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
 
-    els.completedSection.style.display = 'block';
-    els.completedCount.textContent = `共 ${completedParcels.length} 件`;
+    if (els.completedSection) els.completedSection.style.display = 'block';
+    if (els.completedCount) els.completedCount.textContent = `共 ${completedParcels.length} 件`;
 
-    els.completedList.innerHTML = completedParcels.map(p => {
-      const dateStr = p.updatedAt
-        ? formatDate(new Date(p.updatedAt).toISOString().split('T')[0])
-        : formatDate(new Date(p.createdAt).toISOString().split('T')[0]);
-      return `
-        <div class="completed-item" data-id="${p.id}">
-          <span class="completed-item-icon">✅</span>
-          <div class="completed-item-info">
-            <div class="completed-item-code">${escapeHtml(p.pickupCode || p.itemName || '快递')}</div>
-            <div class="completed-item-meta">
-              ${p.carrier ? escapeHtml(p.carrier) + ' · ' : ''}
-              ${p.stationName ? escapeHtml(p.stationName) + ' · ' : ''}
-              ${dateStr}
+    if (els.completedList) {
+      els.completedList.innerHTML = completedParcels.map(p => {
+        const dateStr = p.updatedAt
+          ? formatDate(new Date(p.updatedAt).toISOString().split('T')[0])
+          : formatDate(new Date(p.createdAt).toISOString().split('T')[0]);
+        return `
+          <div class="completed-item" data-id="${p.id}">
+            <span class="completed-item-icon">✅</span>
+            <div class="completed-item-info">
+              <div class="completed-item-code">${escapeHtml(p.pickupCode || p.itemName || '快递')}</div>
+              <div class="completed-item-meta">
+                ${p.carrier ? escapeHtml(p.carrier) + ' · ' : ''}
+                ${p.stationName ? escapeHtml(p.stationName) + ' · ' : ''}
+                ${dateStr}
+              </div>
             </div>
           </div>
-        </div>
-      `;
-    }).join('');
+        `;
+      }).join('');
+    }
   }
 
   function renderParcelList() {
@@ -912,23 +914,23 @@
     const stations = sortStations(groupByStation(allVisible));
 
     const pendingStationCount = stations.filter(s => s.pickupCount > 0).length;
-    els.stationCount.textContent = `${pendingStationCount} 个驿站待取`;
+    if (els.stationCount) els.stationCount.textContent = `${pendingStationCount} 个驿站待取`;
 
     if (filtered.length === 0) {
-      els.stationList.innerHTML = '';
-      els.completedSection.style.display = 'none';
-      els.emptyState.style.display = parcels.length === 0 ? 'block' : 'none';
-      if (parcels.length > 0) {
+      if (els.stationList) els.stationList.innerHTML = '';
+      if (els.completedSection) els.completedSection.style.display = 'none';
+      if (els.emptyState) els.emptyState.style.display = parcels.length === 0 ? 'block' : 'none';
+      if (parcels.length > 0 && els.stationList) {
         els.stationList.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">没有符合条件的快递</div>';
       }
       return;
     }
 
-    els.emptyState.style.display = 'none';
+    if (els.emptyState) els.emptyState.style.display = 'none';
 
     // 已取件状态筛选时，只显示已取件模块，不显示驿站
     if (statusFilter === '已取件') {
-      els.stationList.innerHTML = '';
+      if (els.stationList) els.stationList.innerHTML = '';
       renderCompletedList(filtered);
       return;
     }
@@ -936,14 +938,14 @@
     // 待取件状态筛选时，只显示有待取件的驿站，不显示已取件模块
     if (statusFilter === '待取件') {
       const pendingStations = stations.filter(s => s.pickupCount > 0);
-      els.stationList.innerHTML = pendingStations.map(s => renderStationCard(s)).join('');
-      els.completedSection.style.display = 'none';
+      if (els.stationList) els.stationList.innerHTML = pendingStations.map(s => renderStationCard(s)).join('');
+      if (els.completedSection) els.completedSection.style.display = 'none';
       return;
     }
 
     // 全部状态：所有驿站 + 已取件模块
     // 有待取件的显示完整卡片，无待取件的显示精简卡片
-    els.stationList.innerHTML = stations.map(s => renderStationCard(s)).join('');
+    if (els.stationList) els.stationList.innerHTML = stations.map(s => renderStationCard(s)).join('');
     renderCompletedList(filtered);
   }
 
@@ -2173,6 +2175,7 @@
   let currentVersionName = '1.0.0';
   let currentVersionCode = 1;
   let latestUpdateInfo = null;
+  let updateDownloaded = false; // 是否已下载完成（用于直接安装）
 
   // 初始化版本信息
   function initVersionInfo() {
@@ -2255,6 +2258,20 @@
     document.getElementById('current-version-name').textContent = currentVersionName;
     document.getElementById('update-changelog').textContent = data.changelog || '暂无更新说明';
 
+    // 重置下载状态
+    updateDownloaded = false;
+    const btnUpdate = document.getElementById('btn-update-now');
+    if (btnUpdate) {
+      btnUpdate.textContent = '立即更新';
+      btnUpdate.disabled = false;
+    }
+    const progressWrap = document.getElementById('update-progress-wrap');
+    if (progressWrap) progressWrap.style.display = 'none';
+    const progressFill = document.getElementById('update-progress-fill');
+    if (progressFill) progressFill.style.width = '0%';
+    const progressText = document.getElementById('update-progress-text');
+    if (progressText) progressText.textContent = '0%';
+
     modal.style.display = 'flex';
   }
 
@@ -2271,6 +2288,12 @@
     }
 
     if (window.AndroidBridge && typeof window.AndroidBridge.downloadUpdate === 'function') {
+      // 如果已经下载完成了，直接安装
+      if (updateDownloaded && typeof window.AndroidBridge.installDownloadedApk === 'function') {
+        window.AndroidBridge.installDownloadedApk();
+        return;
+      }
+
       // APP内下载，显示进度条
       const progressWrap = document.getElementById('update-progress-wrap');
       const btnUpdate = document.getElementById('btn-update-now');
@@ -2300,7 +2323,15 @@
     if (progressFill) progressFill.style.width = progress + '%';
     if (progressText) progressText.textContent = progress + '%';
 
-    if (failed) {
+    if (done) {
+      // 下载完成，按钮变成"安装"，可以点击重试
+      if (btnUpdate) {
+        btnUpdate.textContent = '安装';
+        btnUpdate.disabled = false;
+      }
+      // 标记已下载完成，下次点击直接安装
+      updateDownloaded = true;
+    } else if (failed) {
       showToast('下载失败', 'error');
       if (btnUpdate) {
         btnUpdate.textContent = '立即更新';
@@ -2308,6 +2339,7 @@
       }
       const progressWrap = document.getElementById('update-progress-wrap');
       if (progressWrap) progressWrap.style.display = 'none';
+      updateDownloaded = false;
     }
   };
 
