@@ -1,12 +1,12 @@
 {
-  "versionCode": 12,
-  "versionName": "1.4.2",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
+  "versionCode": 13,
+  "versionName": "1.4.3",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.4.2/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.4.3/express-manager.apk"
   ],
-  "changelog": "🐛 修复驿站列表空白的问题\n\n1. 修复HTML缺少元素导致渲染报错，驿站列表空白不显示的问题\n2. 给所有DOM元素访问加上空值保护，避免单个元素缺失导致整个页面崩溃\n3. 模拟按钮点击后会正确显示toast提示"
+  "changelog": "🔧 优化驿站管理模式复选框\n\n1. 加大复选框尺寸（22px → 26px），更容易点击\n2. 提高复选框层级（z-index 10 → 999），确保不被遮挡\n3. 复选框增加阴影效果，更醒目\n4. 点击时有缩放反馈，确认点击生效"
 }
