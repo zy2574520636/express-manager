@@ -400,6 +400,7 @@ body {
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: all 0.2s;
+  position: relative;
 }
 .station-card:hover {
   box-shadow: var(--shadow-md);
@@ -653,6 +654,11 @@ body {
 }
 .station-edit-mode .station-card-compact {
   padding-left: 44px !important;
+}
+/* 大卡片的复选框放在顶部对齐 */
+.station-edit-mode .station-card:not(.station-card-compact) .station-edit-checkbox {
+  top: 20px;
+  transform: none;
 }
 body.station-edit-mode {
   padding-bottom: 80px;

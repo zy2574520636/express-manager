@@ -2688,7 +2688,20 @@
         showToast('请先选择要隐藏的驿站', 'warning');
         return;
       }
-      showConfirmDialog(`确定要隐藏选中的 ${selectedStationsForHide.size} 个驿站吗？\n（数据不会删除，下次收到该驿站新快递时会自动恢复）`, () => {
+      // 统计选中的驿站中有多少个有待取件
+      let pendingCount = 0;
+      const allStations = groupByStation(parcels);
+      selectedStationsForHide.forEach(name => {
+        const s = allStations.find(st => st.name === name);
+        if (s && s.pickupCount > 0) pendingCount += s.pickupCount;
+      });
+
+      let confirmMsg = `确定要隐藏选中的 ${selectedStationsForHide.size} 个驿站吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
+      if (pendingCount > 0) {
+        confirmMsg = `⚠️ 选中的驿站里还有 ${pendingCount} 个待取件！\n\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
+      }
+
+      showConfirmDialog(confirmMsg, () => {
         if (!settings.hiddenStations) settings.hiddenStations = [];
         selectedStationsForHide.forEach(name => {
           if (!settings.hiddenStations.includes(name)) {
