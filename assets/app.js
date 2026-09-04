@@ -435,6 +435,61 @@
     }, 2500);
   }
 
+  // 自定义确认对话框
+  function showConfirmDialog(message, options = {}) {
+    return new Promise((resolve) => {
+      const dialog = document.getElementById('confirm-dialog');
+      const iconEl = document.getElementById('confirm-dialog-icon');
+      const textEl = document.getElementById('confirm-dialog-text');
+      const okBtn = document.getElementById('confirm-dialog-ok');
+      const cancelBtn = document.getElementById('confirm-dialog-cancel');
+
+      if (!dialog) {
+        resolve(confirm(message));
+        return;
+      }
+
+      // 设置图标和文本
+      iconEl.textContent = options.icon || '⚠️';
+      textEl.textContent = message;
+
+      // 设置按钮文字
+      okBtn.textContent = options.okText || '确定';
+      cancelBtn.textContent = options.cancelText || '取消';
+
+      // 显示对话框
+      dialog.style.display = 'flex';
+
+      // 清理函数
+      const cleanup = () => {
+        dialog.style.display = 'none';
+        okBtn.onclick = null;
+        cancelBtn.onclick = null;
+        dialog.onclick = null;
+      };
+
+      // 确定按钮
+      okBtn.onclick = () => {
+        cleanup();
+        resolve(true);
+      };
+
+      // 取消按钮
+      cancelBtn.onclick = () => {
+        cleanup();
+        resolve(false);
+      };
+
+      // 点击背景关闭（视为取消）
+      dialog.onclick = (e) => {
+        if (e.target === dialog) {
+          cleanup();
+          resolve(false);
+        }
+      };
+    });
+  }
+
   function formatDate(dateStr) {
     if (!dateStr) return '-';
     const d = new Date(dateStr);
@@ -663,7 +718,10 @@
           <div class="station-compact-row">
             <span class="station-compact-icon">🏪</span>
             <span class="station-compact-name">${escapeHtml(station.name)}</span>
-            <span class="station-compact-status">已全部取完 ✓</span>
+            <div class="station-compact-stat">
+              <span class="compact-stat-num">0</span>
+              <span class="compact-stat-label">待取件</span>
+            </div>
           </div>
         </div>
       `;
@@ -2624,13 +2682,20 @@
     if (visibleStations.length > 0) {
       html += `<div class="station-manage-section-title">显示中的驿站（${visibleStations.length}）</div>`;
       html += visibleStations.map(s => {
+        const aliasHtml = s.aliases.length > 0
+          ? `<div class="station-manage-alias">包含：${s.aliases.join('、')}</div>`
+          : '';
         return `
           <div class="station-manage-item">
             <div class="station-manage-info">
               <div class="station-manage-name">🏪 ${escapeHtml(s.name)}</div>
               <div class="station-manage-meta">共 ${s.count} 个包裹 · 待取 ${s.pickupCount} 件</div>
+              ${aliasHtml}
             </div>
             <div class="station-manage-actions">
+              <button class="station-manage-btn" data-action="popup-merge" data-name="${encodeURIComponent(s.name)}">
+                合并
+              </button>
               <button class="station-manage-btn btn-warn" data-action="popup-hide" data-name="${encodeURIComponent(s.name)}">
                 隐藏
               </button>
@@ -2644,11 +2709,15 @@
     if (hiddenStations.length > 0) {
       html += `<div class="station-manage-section-title">已隐藏的驿站（${hiddenStations.length}）</div>`;
       html += hiddenStations.map(s => {
+        const aliasHtml = s.aliases.length > 0
+          ? `<div class="station-manage-alias">包含：${s.aliases.join('、')}</div>`
+          : '';
         return `
           <div class="station-manage-item station-hidden-item">
             <div class="station-manage-info">
               <div class="station-manage-name">🏪 ${escapeHtml(s.name)}</div>
               <div class="station-manage-meta">共 ${s.count} 个包裹 · 待取 ${s.pickupCount} 件</div>
+              ${aliasHtml}
             </div>
             <div class="station-manage-actions">
               <button class="station-manage-btn btn-primary" data-action="popup-unhide" data-name="${encodeURIComponent(s.name)}">
@@ -2662,19 +2731,30 @@
 
     listEl.innerHTML = html;
 
+    // 绑定合并按钮
+    listEl.querySelectorAll('[data-action="popup-merge"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const stationName = decodeURIComponent(btn.dataset.name);
+        openMergeStationModal(stationName, 'popup');
+      });
+    });
+
     // 绑定隐藏按钮
     listEl.querySelectorAll('[data-action="popup-hide"]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const stationName = decodeURIComponent(btn.dataset.name);
         const station = allStations.find(s => s.name === stationName);
         const pendingCount = station ? station.pickupCount || 0 : 0;
 
-        let confirmMsg = `确定要隐藏「${stationName}」吗？\n\n（数据不会删除，下次收到新快递时会自动恢复）`;
+        let confirmMsg = `确定要隐藏「${stationName}」吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
+        let icon = '🤔';
         if (pendingCount > 0) {
-          confirmMsg = `⚠️ 该驿站还有 ${pendingCount} 个待取件！\n\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
+          confirmMsg = `该驿站还有 ${pendingCount} 个待取件！\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
+          icon = '⚠️';
         }
 
-        if (!confirm(confirmMsg)) return;
+        const confirmed = await showConfirmDialog(confirmMsg, { icon, okText: '隐藏' });
+        if (!confirmed) return;
 
         if (!settings.hiddenStations) settings.hiddenStations = [];
         if (!settings.hiddenStations.includes(stationName)) {
@@ -2842,10 +2922,14 @@
       });
     });
     listEl.querySelectorAll('[data-action="hide-station-manage"]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const stationName = decodeURIComponent(btn.dataset.name);
-        if (!confirm(`确定要隐藏「${stationName}」吗？\n（数据不会删除，下次收到新快递时会自动恢复）`)) return;
+        const confirmed = await showConfirmDialog(
+          `确定要隐藏「${stationName}」吗？\n（数据不会删除，下次收到新快递时会自动恢复）`,
+          { icon: '🤔', okText: '隐藏' }
+        );
+        if (!confirmed) return;
         if (!settings.hiddenStations) settings.hiddenStations = [];
         if (!settings.hiddenStations.includes(stationName)) {
           settings.hiddenStations.push(stationName);
@@ -2868,7 +2952,7 @@
   /**
    * 打开合并驿站弹窗：选择要把当前驿站合并到哪个驿站
    */
-  function openMergeStationModal(sourceStation) {
+  function openMergeStationModal(sourceStation, triggerFrom = 'settings') {
     const allStations = getAllRawStationNames();
     const otherStations = allStations.filter(s => {
       // 排除自己，以及已经是同一个标准名的
@@ -2927,7 +3011,7 @@
     listEl.querySelectorAll('.merge-station-option').forEach(opt => {
       opt.addEventListener('click', () => {
         const targetStation = decodeURIComponent(opt.dataset.target);
-        mergeStation(sourceStation, targetStation);
+        mergeStation(sourceStation, targetStation, triggerFrom);
         document.body.removeChild(overlay);
       });
     });
@@ -2938,7 +3022,7 @@
   /**
    * 执行驿站合并：把 source 合并到 target（target 作为标准名）
    */
-  function mergeStation(source, target) {
+  function mergeStation(source, target, triggerFrom = 'settings') {
     if (!settings.stationAliases) settings.stationAliases = {};
 
     // 先看 source 本身有没有对应的标准名（即它是不是已经是别名）
@@ -2967,6 +3051,9 @@
 
     saveSettings();
     renderStationManageList();
+    if (triggerFrom === 'popup') {
+      renderStationManagePopupList();
+    }
     renderAll();
     showToast(`已将「${source}」合并到「${targetMaster}」`, 'success');
   }
