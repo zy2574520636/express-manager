@@ -711,22 +711,6 @@
     const hasPending = pendingParcels.length > 0;
     const noPendingClass = hasPending ? '' : ' no-pending';
 
-    // 没有待取件时，显示精简卡片（只有一行）
-    if (!hasPending) {
-      return `
-        <div class="station-card station-card-compact${noPendingClass}" data-station="${encodeURIComponent(station.name)}">
-          <div class="station-compact-row">
-            <span class="station-compact-icon">🏪</span>
-            <span class="station-compact-name">${escapeHtml(station.name)}</span>
-            <div class="station-compact-stat">
-              <span class="compact-stat-num">0</span>
-              <span class="compact-stat-label">待取件</span>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
     // 待取件：按状态优先级排序，待取件最前
     pendingParcels.sort((a, b) => {
       const statusOrder = { '待取件': 0, '派送中': 1, '运输中': 2, '待发货': 3 };
@@ -2354,15 +2338,10 @@
   function autoCheckUpdate() {
     if (!settings.updateUrl || !settings.updateUrl.trim()) return;
 
-    const now = Date.now();
-    const oneDay = 24 * 60 * 60 * 1000;
-
-    // 距离上次检查超过1天才自动检查
-    if (!settings.lastUpdateCheck || (now - settings.lastUpdateCheck) > oneDay) {
-      setTimeout(() => {
-        checkUpdate(false); // 不显示"已是最新"的提示
-      }, 2000); // 延迟2秒，不影响启动速度
-    }
+    // 每次启动都检查更新，有更新就弹窗提示
+    setTimeout(() => {
+      checkUpdate(false); // 不显示"已是最新"的提示，有更新会自动弹窗
+    }, 1500); // 延迟1.5秒，不影响启动速度
   }
 
   // 更新地址设置

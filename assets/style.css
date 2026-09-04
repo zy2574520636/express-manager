@@ -561,30 +561,13 @@ body {
 
 /* 驿站无待取件时精简成一行 */
 .station-card.no-pending {
-  opacity: 0.6;
+  opacity: 0.7;
 }
 .station-card.no-pending .station-header {
-  padding: 12px 18px;
-  background: var(--bg);
-  border-bottom: none;
+  padding: 14px 18px;
 }
-.station-card.no-pending .station-address,
-.station-card.no-pending .station-stats,
-.station-card.no-pending .station-parcels,
 .station-card.no-pending .station-action-bar {
   display: none;
-}
-.station-card.no-pending .station-name {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 0;
-}
-.station-card.no-pending .station-name::after {
-  content: '已全部取完 ✓';
-  margin-left: 10px;
-  font-size: 12px;
-  font-weight: normal;
-  color: var(--success);
 }
 
 /* 精简驿站卡片（无待取件时只有一行） */
