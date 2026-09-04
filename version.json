@@ -1,12 +1,12 @@
 {
-  "versionCode": 17,
-  "versionName": "1.6.0",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.6.0/express-manager.apk",
+  "versionCode": 18,
+  "versionName": "1.6.1",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.6.1/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.6.0/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.6.0/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.6.0/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.6.0/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.6.1/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.6.1/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.6.1/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.6.1/express-manager.apk"
   ],
-  "changelog": "🎨 界面优化 & 功能整合\n\n1. 已取完的驿站保留小蓝条，显示「0 待取件」，视觉更统一\n2. 隐藏驿站的二次确认弹窗换新样式，和 App 整体风格保持一致\n3. 首页驿站管理新增「合并」功能，不用再跑去设置里操作了\n4. 首页驿站管理显示别名信息，一眼看出哪些驿站已合并"
+  "changelog": "🐛 修复全部取完按钮 + 优化驿站管理\n\n1. 修复「全部取完」按钮点击没反应的问题\n2. 没有待取件的驿站点隐藏直接生效，不再弹确认\n3. 有待取件的驿站隐藏时弹二次确认提醒\n4. 移除设置里的驿站管理，统一到首页「管理」入口"
 }

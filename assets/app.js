@@ -1697,6 +1697,15 @@
         return;
       }
 
+      // 批量签收按钮（在驿站卡片底部，不在包裹卡片内）
+      const pickupAllBtn = e.target.closest('[data-action="pickup-all"]');
+      if (pickupAllBtn) {
+        e.stopPropagation();
+        const stationName = decodeURIComponent(pickupAllBtn.dataset.station);
+        pickupAllInStation(stationName);
+        return;
+      }
+
       const card = e.target.closest('.parcel-card');
       if (!card) return;
       const id = card.dataset.id;
@@ -1718,15 +1727,6 @@
           const code = actionBtn.dataset.code;
           copyToClipboard(code, actionBtn);
         }
-        return;
-      }
-
-      // 批量签收按钮
-      const pickupAllBtn = e.target.closest('[data-action="pickup-all"]');
-      if (pickupAllBtn) {
-        e.stopPropagation();
-        const stationName = decodeURIComponent(pickupAllBtn.dataset.station);
-        pickupAllInStation(stationName);
         return;
       }
 
@@ -2746,15 +2746,14 @@
         const station = allStations.find(s => s.name === stationName);
         const pendingCount = station ? station.pickupCount || 0 : 0;
 
-        let confirmMsg = `确定要隐藏「${stationName}」吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
-        let icon = '🤔';
+        // 只有待取件 > 0 时才弹二次确认
         if (pendingCount > 0) {
-          confirmMsg = `该驿站还有 ${pendingCount} 个待取件！\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
-          icon = '⚠️';
+          const confirmed = await showConfirmDialog(
+            `该驿站还有 ${pendingCount} 个待取件！\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`,
+            { icon: '⚠️', okText: '隐藏' }
+          );
+          if (!confirmed) return;
         }
-
-        const confirmed = await showConfirmDialog(confirmMsg, { icon, okText: '隐藏' });
-        if (!confirmed) return;
 
         if (!settings.hiddenStations) settings.hiddenStations = [];
         if (!settings.hiddenStations.includes(stationName)) {
