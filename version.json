@@ -1,12 +1,12 @@
 {
-  "versionCode": 14,
-  "versionName": "1.5.0",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
+  "versionCode": 15,
+  "versionName": "1.5.1",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.5.0/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.5.1/express-manager.apk"
   ],
-  "changelog": "✨ 驿站管理改为弹窗模式\n\n1. 驿站管理改为弹窗形式，点「管理」按钮打开弹窗\n2. 弹窗里清晰列出所有驿站，只显示驿站信息不带快递详情\n3. 每个驿站右边有「隐藏」/「恢复显示」按钮，操作更直观\n4. 管理按钮从齿轮图标改为「管理」文字，避免和设置重复\n5. 显示每个驿站的总包裹数和待取件数"
+  "changelog": "🐛 修复驿站管理隐藏按钮无反应的问题\n\n1. 修复隐藏按钮调用不存在的函数导致点击无反应的问题\n2. 改为使用系统确认对话框，点击隐藏后会弹出确认提示\n3. 同时修复了设置页中驿站管理的相同问题"
 }

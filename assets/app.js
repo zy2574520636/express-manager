@@ -2735,16 +2735,16 @@
           confirmMsg = `⚠️ 该驿站还有 ${pendingCount} 个待取件！\n\n确定要隐藏吗？\n（数据不会删除，下次收到新快递时会自动恢复）`;
         }
 
-        showConfirmDialog(confirmMsg, () => {
-          if (!settings.hiddenStations) settings.hiddenStations = [];
-          if (!settings.hiddenStations.includes(stationName)) {
-            settings.hiddenStations.push(stationName);
-          }
-          saveSettings();
-          renderStationManagePopupList();
-          renderAll();
-          showToast('已隐藏', 'success');
-        });
+        if (!confirm(confirmMsg)) return;
+
+        if (!settings.hiddenStations) settings.hiddenStations = [];
+        if (!settings.hiddenStations.includes(stationName)) {
+          settings.hiddenStations.push(stationName);
+        }
+        saveSettings();
+        renderStationManagePopupList();
+        renderAll();
+        showToast('已隐藏', 'success');
       });
     });
 
@@ -2906,16 +2906,15 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const stationName = decodeURIComponent(btn.dataset.name);
-        showConfirmDialog(`确定要隐藏「${stationName}」吗？\n（数据不会删除，下次收到新快递时会自动恢复）`, () => {
-          if (!settings.hiddenStations) settings.hiddenStations = [];
-          if (!settings.hiddenStations.includes(stationName)) {
-            settings.hiddenStations.push(stationName);
-          }
-          saveSettings();
-          renderStationManageList();
-          renderAll();
-          showToast('已隐藏', 'success');
-        });
+        if (!confirm(`确定要隐藏「${stationName}」吗？\n（数据不会删除，下次收到新快递时会自动恢复）`)) return;
+        if (!settings.hiddenStations) settings.hiddenStations = [];
+        if (!settings.hiddenStations.includes(stationName)) {
+          settings.hiddenStations.push(stationName);
+        }
+        saveSettings();
+        renderStationManageList();
+        renderAll();
+        showToast('已隐藏', 'success');
       });
     });
     listEl.querySelectorAll('[data-action="unhide-station"]').forEach(btn => {
