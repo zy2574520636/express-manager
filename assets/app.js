@@ -2279,7 +2279,11 @@
         btnUpdate.textContent = '下载中...';
         btnUpdate.disabled = true;
       }
-      window.AndroidBridge.downloadUpdate(latestUpdateInfo.apkUrl);
+      // 优先使用多地址列表，降级到单地址
+      const urls = latestUpdateInfo.apkUrls && latestUpdateInfo.apkUrls.length > 0
+        ? JSON.stringify(latestUpdateInfo.apkUrls)
+        : latestUpdateInfo.apkUrl;
+      window.AndroidBridge.downloadUpdate(urls);
     } else {
       // 网页版直接跳转
       window.open(latestUpdateInfo.apkUrl, '_blank');

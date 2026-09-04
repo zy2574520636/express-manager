@@ -1,6 +1,12 @@
 {
-  "versionCode": 8,
-  "versionName": "1.3.4",
-  "apkUrl": "https://github.com/zy2574520636/express-manager/releases/download/v1.3.4/express-manager.apk",
-  "changelog": "1. 优化驿站标题区布局，删除数量徽章更清爽\n2. 修复编辑模式下大卡片勾选框不显示的问题\n3. 隐藏有待取件的驿站时增加警告提示\n4. APP内下载更新+自动安装（绕过第三方下载器）"
+  "versionCode": 9,
+  "versionName": "1.3.5",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.3.5/express-manager.apk",
+  "apkUrls": [
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.3.5/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.3.5/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.3.5/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.3.5/express-manager.apk"
+  ],
+  "changelog": "1. 新增国内加速下载源，下载慢自动切换\n2. 延长下载超时时间，更稳定\n3. 优化驿站标题区布局\n4. 修复编辑模式勾选框显示问题\n5. 隐藏有待取件的驿站时增加警告提示"
 }
