@@ -1219,17 +1219,19 @@
   /**
    * 批量签收：某个驿站的所有待取件一次性标记为已取件
    */
-  function pickupAllInStation(stationName) {
+  async function pickupAllInStation(stationName) {
     const toComplete = parcels.filter(p =>
       p.status === '待取件' &&
-      (p.stationName || '') === stationName
+      getStationKey(p) === stationName
     );
 
     if (toComplete.length === 0) return;
 
-    if (!confirm(`确定将「${stationName}」的 ${toComplete.length} 件快递全部标记为已取件吗？`)) {
-      return;
-    }
+    const confirmed = await showConfirmDialog(
+      `确定将「${stationName}」的 ${toComplete.length} 件快递全部标记为已取件吗？`,
+      { icon: '📦', okText: '全部取完' }
+    );
+    if (!confirmed) return;
 
     const now = Date.now();
     toComplete.forEach(p => {

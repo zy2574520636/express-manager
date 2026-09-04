@@ -1,12 +1,12 @@
 {
-  "versionCode": 19,
-  "versionName": "1.7.0",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.0/express-manager.apk",
+  "versionCode": 20,
+  "versionName": "1.7.1",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.0/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.0/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.0/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.7.0/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk"
   ],
-  "changelog": "✨ 小蓝条常驻 + 启动自动检查更新\n\n1. 驿站小蓝条一直显示，取完后数字变成0，卡片不消失\n2. 每次打开软件自动检查更新，有新版本直接弹窗提醒"
+  "changelog": "🐛 修复全部取完数量错误 + 弹窗美化\n\n1. 修复「全部取完」数量显示不对的问题（别名驿站匹配不上）\n2. 「全部取完」确认弹窗换成 App 同款样式，不再丑丑的"
 }
