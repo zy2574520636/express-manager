@@ -766,11 +766,6 @@
     const pendingParcelsList = parcels.filter(p => p.status === '待取件');
     const count = pendingParcelsList.length;
 
-    if (count === 0) {
-      if (els.todayOverview) els.todayOverview.style.display = 'none';
-      return;
-    }
-
     // 统计有几个驿站
     const stationMap = {};
     pendingParcelsList.forEach(p => {
@@ -781,7 +776,13 @@
 
     if (els.todayOverview) els.todayOverview.style.display = 'flex';
     if (els.todayCount) els.todayCount.textContent = count;
-    if (els.todayDesc) els.todayDesc.textContent = `${stationCount} 个驿站待取`;
+    if (els.todayDesc) {
+      if (count === 0) {
+        els.todayDesc.textContent = '暂无待取快递 🎉';
+      } else {
+        els.todayDesc.textContent = `${stationCount} 个驿站待取`;
+      }
+    }
   }
 
   // ===== 待确认快递 =====

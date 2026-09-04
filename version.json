@@ -1,12 +1,12 @@
 {
-  "versionCode": 20,
-  "versionName": "1.7.1",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
+  "versionCode": 21,
+  "versionName": "1.7.2",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.7.1/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk"
   ],
-  "changelog": "🐛 修复全部取完数量错误 + 弹窗美化\n\n1. 修复「全部取完」数量显示不对的问题（别名驿站匹配不上）\n2. 「全部取完」确认弹窗换成 App 同款样式，不再丑丑的"
+  "changelog": "🎯 今日待取小蓝条常驻\n\n1. 顶部「今日待取」蓝色横幅一直显示，取完后数字变成0\n2. 没有待取件时显示「暂无待取快递 🎉」"
 }
