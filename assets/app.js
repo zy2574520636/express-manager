@@ -675,7 +675,6 @@
     ` : '';
 
     const trackingHtml = p.trackingNumber ? `<span>📦 ${escapeHtml(p.trackingNumber.substring(0, 12) + (p.trackingNumber.length > 12 ? '...' : ''))}</span>` : '';
-    const carrierHtml = p.carrier ? `<span>🚚 ${escapeHtml(p.carrier)}</span>` : '';
 
     const isCompleted = p.status === '已取件' || p.status === '已签收';
     const completedClass = isCompleted ? ' parcel-completed' : '';
@@ -697,7 +696,6 @@
             <span class="status-badge status-${escapeHtml(p.status)}">${escapeHtml(p.status)}</span>
             ${trackingHtml}
           </div>
-          ${carrierHtml ? `<div class="parcel-meta">${carrierHtml}</div>` : ''}
           ${pickupCodeHtml}
         </div>
       </div>

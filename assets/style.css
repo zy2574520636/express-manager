@@ -955,22 +955,6 @@ body.station-edit-mode {
   border-color: var(--border);
 }
 
-.parcel-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  z-index: 3;
-}
-.parcel-card.status-待发货::before { background: #94a3b8; }
-.parcel-card.status-运输中::before { background: var(--purple); }
-.parcel-card.status-派送中::before { background: var(--primary); }
-.parcel-card.status-待取件::before { background: var(--warning); }
-.parcel-card.status-已取件::before { background: var(--success); }
-.parcel-card.status-已签收::before { background: var(--success); }
-
 .parcel-top {
   display: flex;
   justify-content: space-between;
@@ -1017,8 +1001,8 @@ body.station-edit-mode {
 
 /* 取件码 - 加粗醒目 */
 .pickup-code-box {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border: 1px dashed #f59e0b;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
   border-radius: 8px;
   padding: 10px 12px;
   margin-top: 8px;
@@ -1029,7 +1013,7 @@ body.station-edit-mode {
 }
 .pickup-code-label {
   font-size: 12px;
-  color: #92400e;
+  color: var(--muted);
   font-weight: 500;
 }
 .pickup-code-date {
@@ -1037,13 +1021,13 @@ body.station-edit-mode {
   top: 8px;
   right: 12px;
   font-size: 11px;
-  color: #a16207;
+  color: var(--muted);
   opacity: 0.7;
 }
 .pickup-code-value {
   font-size: 22px;
   font-weight: 800;
-  color: #78350f;
+  color: var(--primary);
   font-family: 'SF Mono', Monaco, 'Courier New', monospace;
   letter-spacing: 1px;
 }
@@ -1366,8 +1350,8 @@ body.station-edit-mode {
   word-break: break-all;
 }
 .detail-pickup-code {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border: 2px dashed #f59e0b;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
   border-radius: 10px;
   padding: 16px;
   text-align: center;
@@ -1375,13 +1359,13 @@ body.station-edit-mode {
 }
 .detail-pickup-code .label {
   font-size: 13px;
-  color: #92400e;
+  color: var(--muted);
   margin-bottom: 6px;
 }
 .detail-pickup-code .code {
   font-size: 32px;
   font-weight: 800;
-  color: #78350f;
+  color: var(--primary);
   letter-spacing: 4px;
   font-family: 'SF Mono', Monaco, monospace;
 }

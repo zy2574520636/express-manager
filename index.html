@@ -18,7 +18,7 @@
     </div>
     <div class="topbar-actions">
       <button class="btn btn-ghost" id="btn-settings" title="设置">⚙️</button>
-      <button class="btn btn-ghost" id="btn-export" title="导出数据">📤</button>
+      <button class="btn btn-ghost" id="btn-export" title="导出数据" style="display:none">📤</button>
       <button class="btn btn-primary btn-sm" id="btn-add">+ 添加</button>
     </div>
   </div>
@@ -347,7 +347,7 @@
       <!-- 数据备份 -->
       <div class="settings-section">
         <h4 class="settings-title">💾 数据备份</h4>
-        <div class="clean-card">
+        <div class="clean-card" style="display:none">
           <div class="clean-info">
             <div class="clean-title">导出数据</div>
             <div class="clean-desc">将所有快递数据导出为JSON文件备份</div>
@@ -418,10 +418,24 @@
           </div>
         </div>
         <div class="usage-item">
+          <span class="usage-icon">👆</span>
+          <div class="usage-text">
+            <strong>查看详情</strong>
+            <p>点击快递卡片，进入详情页查看完整信息，可编辑或修改状态</p>
+          </div>
+        </div>
+        <div class="usage-item">
           <span class="usage-icon">✅</span>
           <div class="usage-text">
             <strong>右滑签收</strong>
             <p>在快递卡片上往右滑，露出绿色"✓ 已取件"背景，滑过半松手即可标记已取件</p>
+          </div>
+        </div>
+        <div class="usage-item">
+          <span class="usage-icon">🗑️</span>
+          <div class="usage-text">
+            <strong>左滑删除</strong>
+            <p>在快递卡片上往左滑，露出红色"🗑 删除"背景，滑过半松手即可删除</p>
           </div>
         </div>
         <div class="usage-item">
@@ -436,6 +450,13 @@
           <div class="usage-text">
             <strong>批量签收</strong>
             <p>同一个驿站有多件待取时，点"全部取完"一键签收</p>
+          </div>
+        </div>
+        <div class="usage-item">
+          <span class="usage-icon">⬅️</span>
+          <div class="usage-text">
+            <strong>返回操作</strong>
+            <p>按手机返回键或手势返回，可逐层关闭弹窗，回到上一级</p>
           </div>
         </div>
       </div>
@@ -471,7 +492,7 @@
           <span class="usage-icon">📋</span>
           <div class="usage-text">
             <strong>一键复制取件码</strong>
-            <p>点黄色取件码框直接复制到剪贴板</p>
+            <p>点取件码框直接复制到剪贴板</p>
           </div>
         </div>
         <div class="usage-item">
