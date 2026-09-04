@@ -282,10 +282,11 @@
     autoClean: false,
     retentionDays: 7,
     vibration: true,  // 震动提醒，默认开启
-    updateUrl: '',    // 版本检查地址
+    updateUrl: 'https://zy2574520636.github.io/express-manager/version.json',    // 版本检查地址
     lastUpdateCheck: 0, // 上次检查更新时间
     monitorApps: {},   // 监听的APP列表，{包名: true/false}，默认全不选
     stationAliases: {},  // 驿站别名映射 {别名: 标准名}，用于合并同名驿站
+    hiddenStations: [],  // 已隐藏的驿站列表（只是不显示，数据保留，收到新快递自动恢复）
     pendingConfirmEnabled: false // 新快递先待确认再入库
   };
 
@@ -497,7 +498,7 @@
     return addr || '';
   }
 
-  function groupByStation(filteredParcels) {
+  function groupByStation(filteredParcels, includeEmpty = true) {
     const stations = {};
     filteredParcels.forEach(p => {
       const key = getStationKey(p);
@@ -518,7 +519,15 @@
         stations[key].latestCreated = p.createdAt;
       }
     });
-    return Object.values(stations);
+
+    let result = Object.values(stations);
+
+    // 过滤掉隐藏的驿站
+    if (settings.hiddenStations && settings.hiddenStations.length > 0) {
+      result = result.filter(s => !settings.hiddenStations.includes(s.name));
+    }
+
+    return result;
   }
 
   // ===== 筛选与排序 =====
@@ -646,6 +655,19 @@
     const hasPending = pendingParcels.length > 0;
     const noPendingClass = hasPending ? '' : ' no-pending';
 
+    // 没有待取件时，显示精简卡片（只有一行）
+    if (!hasPending) {
+      return `
+        <div class="station-card station-card-compact${noPendingClass}" data-station="${encodeURIComponent(station.name)}">
+          <div class="station-compact-row">
+            <span class="station-compact-icon">🏪</span>
+            <span class="station-compact-name">${escapeHtml(station.name)}</span>
+            <span class="station-compact-status">已全部取完 ✓</span>
+          </div>
+        </div>
+      `;
+    }
+
     // 待取件：按状态优先级排序，待取件最前
     pendingParcels.sort((a, b) => {
       const statusOrder = { '待取件': 0, '派送中': 1, '运输中': 2, '待发货': 3 };
@@ -673,7 +695,7 @@
       : '<div class="no-parcels-tip">暂无待取件 🎉</div>';
 
     return `
-      <div class="station-card${noPendingClass}">
+      <div class="station-card${noPendingClass}" data-station="${encodeURIComponent(station.name)}">
         <div class="station-header">
           <div class="station-info">
             <div class="station-name">
@@ -884,9 +906,9 @@
     const filtered = getFilteredParcels();
     const statusFilter = els.filterStatus ? els.filterStatus.value : 'all';
 
-    // 筛选待取件相关的驿站（只看待取件/运输中的快递）
-    const pendingFiltered = filtered.filter(p => p.status !== '已取件' && p.status !== '已签收');
-    const stations = sortStations(groupByStation(pendingFiltered));
+    // 用所有快递来分组（包括已取件的），这样驿站不会因为取完就消失
+    const allVisible = filtered;
+    const stations = sortStations(groupByStation(allVisible));
 
     const pendingStationCount = stations.filter(s => s.pickupCount > 0).length;
     els.stationCount.textContent = `${pendingStationCount} 个驿站待取`;
@@ -910,14 +932,16 @@
       return;
     }
 
-    // 待取件状态筛选时，只显示驿站，不显示已取件模块
+    // 待取件状态筛选时，只显示有待取件的驿站，不显示已取件模块
     if (statusFilter === '待取件') {
-      els.stationList.innerHTML = stations.map(s => renderStationCard(s)).join('');
+      const pendingStations = stations.filter(s => s.pickupCount > 0);
+      els.stationList.innerHTML = pendingStations.map(s => renderStationCard(s)).join('');
       els.completedSection.style.display = 'none';
       return;
     }
 
-    // 全部状态：驿站 + 已取件模块
+    // 全部状态：所有驿站 + 已取件模块
+    // 有待取件的显示完整卡片，无待取件的显示精简卡片
     els.stationList.innerHTML = stations.map(s => renderStationCard(s)).join('');
     renderCompletedList(filtered);
   }
@@ -1754,6 +1778,69 @@
       swipingCard = null;
     }
 
+    // ===== 驿站卡片长按进入编辑模式 =====
+    let stationPressCard = null;
+    let stationPressTimer = null;
+    let stationPressTriggered = false;
+    let stationPressMoved = false;
+    let stationPressStartX = 0, stationPressStartY = 0;
+
+    function onStationLongPressStart(e, x, y) {
+      // 编辑模式下不处理
+      if (stationEditMode) return;
+      const stationCard = e.target.closest('.station-card');
+      if (!stationCard) return;
+      // 如果长按的是包裹卡片，不处理（交给快递长按菜单）
+      if (e.target.closest('.parcel-card')) return;
+
+      stationPressCard = stationCard;
+      stationPressStartX = x;
+      stationPressStartY = y;
+      stationPressMoved = false;
+      stationPressTriggered = false;
+
+      stationPressTimer = setTimeout(() => {
+        if (!stationPressMoved && stationPressCard) {
+          stationPressTriggered = true;
+          enterStationEditMode();
+          vibrate([20]);
+        }
+      }, 500);
+    }
+
+    function onStationLongPressMove(e, x, y) {
+      if (!stationPressCard || stationPressTriggered) return;
+      const dx = x - stationPressStartX;
+      const dy = y - stationPressStartY;
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+        stationPressMoved = true;
+        if (stationPressTimer) {
+          clearTimeout(stationPressTimer);
+          stationPressTimer = null;
+        }
+      }
+    }
+
+    function onStationLongPressEnd(e) {
+      if (stationPressTimer) {
+        clearTimeout(stationPressTimer);
+        stationPressTimer = null;
+      }
+      stationPressCard = null;
+    }
+
+    // 点击空白处退出编辑模式
+    document.addEventListener('click', (e) => {
+      if (!stationEditMode) return;
+      if (e.target.closest('.station-edit-bar')) return;
+      if (e.target.closest('.station-edit-checkbox')) return;
+      // 点击驿站卡片不退出（用于选择）
+      if (e.target.closest('.station-card')) return;
+      exitStationEditMode();
+    });
+
+    // 导入导出
+
     function resetSwipe(card) {
       const content = card.querySelector('.parcel-content');
       if (content) content.style.transform = '';
@@ -1766,18 +1853,21 @@
     els.stationList.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
       onSwipeStart(e, e.touches[0].clientX, e.touches[0].clientY);
+      onStationLongPressStart(e, e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
 
     els.stationList.addEventListener('touchmove', (e) => {
       if (!isSwiping || !swipingCard) return;
       if (e.touches.length !== 1) return;
       onSwipeMove(e, e.touches[0].clientX, e.touches[0].clientY);
+      onStationLongPressMove(e, e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: false });
 
     els.stationList.addEventListener('touchend', (e) => {
       if (!isSwiping || !swipingCard) return;
       const touch = e.changedTouches[0];
       onSwipeEnd(e, touch.clientX);
+      onStationLongPressEnd(e);
     });
 
     // 鼠标事件（桌面端调试用）
@@ -1786,17 +1876,20 @@
       if (e.button !== 0) return;
       mouseDown = true;
       onSwipeStart(e, e.clientX, e.clientY);
+      onStationLongPressStart(e, e.clientX, e.clientY);
     });
 
     document.addEventListener('mousemove', (e) => {
       if (!mouseDown) return;
       onSwipeMove(e, e.clientX, e.clientY);
+      onStationLongPressMove(e, e.clientX, e.clientY);
     });
 
     document.addEventListener('mouseup', (e) => {
       if (!mouseDown) return;
       mouseDown = false;
       onSwipeEnd(e, e.clientX);
+      onStationLongPressEnd(e);
     });
 
     // 导入导出
@@ -2472,6 +2565,137 @@
     showToast(checked ? '已全选' : '已全部取消', 'success');
   }
 
+  // ===== 驿站隐藏/编辑模式 =====
+  let stationEditMode = false;
+  let selectedStationsForHide = new Set();
+
+  /**
+   * 进入驿站编辑模式（长按触发）
+   */
+  function enterStationEditMode() {
+    stationEditMode = true;
+    selectedStationsForHide.clear();
+    document.body.classList.add('station-edit-mode');
+    // 给所有驿站卡片加复选框
+    document.querySelectorAll('.station-card').forEach(card => {
+      const stationName = decodeURIComponent(card.dataset.station || '');
+      if (!stationName) return;
+      const checkbox = document.createElement('div');
+      checkbox.className = 'station-edit-checkbox';
+      checkbox.innerHTML = '<div class="station-checkbox-inner"></div>';
+      checkbox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleStationSelect(stationName, checkbox);
+      });
+      card.prepend(checkbox);
+    });
+    // 显示底部操作栏
+    showStationEditBar();
+  }
+
+  function toggleStationSelect(stationName, checkboxEl) {
+    if (selectedStationsForHide.has(stationName)) {
+      selectedStationsForHide.delete(stationName);
+      checkboxEl.classList.remove('checked');
+    } else {
+      selectedStationsForHide.add(stationName);
+      checkboxEl.classList.add('checked');
+    }
+    updateStationEditBar();
+  }
+
+  function exitStationEditMode() {
+    stationEditMode = false;
+    selectedStationsForHide.clear();
+    document.body.classList.remove('station-edit-mode');
+    document.querySelectorAll('.station-edit-checkbox').forEach(el => el.remove());
+    hideStationEditBar();
+  }
+
+  function showStationEditBar() {
+    let bar = document.getElementById('station-edit-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'station-edit-bar';
+      bar.className = 'station-edit-bar';
+      bar.innerHTML = `
+        <button class="btn btn-sm btn-outline" id="station-edit-select-all">全选</button>
+        <span class="station-edit-count">已选 0 个</span>
+        <button class="btn btn-sm btn-danger" id="station-edit-hide-btn">隐藏选中</button>
+        <button class="btn btn-sm" id="station-edit-cancel">完成</button>
+      `;
+      document.body.appendChild(bar);
+    }
+    bar.style.display = 'flex';
+    bar.querySelector('#station-edit-select-all').onclick = () => {
+      const allStations = [];
+      document.querySelectorAll('.station-card').forEach(card => {
+        const name = decodeURIComponent(card.dataset.station || '');
+        if (name) allStations.push(name);
+      });
+      const allSelected = allStations.every(s => selectedStationsForHide.has(s));
+      document.querySelectorAll('.station-card').forEach(card => {
+        const name = decodeURIComponent(card.dataset.station || '');
+        const checkbox = card.querySelector('.station-edit-checkbox');
+        if (!name || !checkbox) return;
+        if (allSelected) {
+          selectedStationsForHide.delete(name);
+          checkbox.classList.remove('checked');
+        } else {
+          selectedStationsForHide.add(name);
+          checkbox.classList.add('checked');
+        }
+      });
+      updateStationEditBar();
+    };
+    bar.querySelector('#station-edit-hide-btn').onclick = () => {
+      if (selectedStationsForHide.size === 0) {
+        showToast('请先选择要隐藏的驿站', 'warning');
+        return;
+      }
+      showConfirmDialog(`确定要隐藏选中的 ${selectedStationsForHide.size} 个驿站吗？\n（数据不会删除，下次收到该驿站新快递时会自动恢复）`, () => {
+        if (!settings.hiddenStations) settings.hiddenStations = [];
+        selectedStationsForHide.forEach(name => {
+          if (!settings.hiddenStations.includes(name)) {
+            settings.hiddenStations.push(name);
+          }
+        });
+        saveSettings();
+        exitStationEditMode();
+        renderAll();
+        showToast(`已隐藏 ${selectedStationsForHide.size} 个驿站`, 'success');
+      });
+    };
+    bar.querySelector('#station-edit-cancel').onclick = () => {
+      exitStationEditMode();
+    };
+    updateStationEditBar();
+  }
+
+  function hideStationEditBar() {
+    const bar = document.getElementById('station-edit-bar');
+    if (bar) bar.style.display = 'none';
+  }
+
+  function updateStationEditBar() {
+    const countEl = document.querySelector('.station-edit-count');
+    if (countEl) countEl.textContent = `已选 ${selectedStationsForHide.size} 个`;
+  }
+
+  /**
+   * 取消隐藏驿站（恢复显示）
+   */
+  function unhideStation(stationName) {
+    if (!settings.hiddenStations) return;
+    const idx = settings.hiddenStations.indexOf(stationName);
+    if (idx === -1) return;
+    settings.hiddenStations.splice(idx, 1);
+    saveSettings();
+    renderStationManageList();
+    renderAll();
+    showToast(`已恢复「${stationName}」`, 'success');
+  }
+
   // ===== 驿站管理 =====
   /**
    * 获取所有驿站及其包裹数量（应用别名映射后）
@@ -2521,33 +2745,74 @@
     const emptyEl = document.getElementById('station-manage-empty');
     if (!listEl) return;
 
-    const stations = getAllStationsWithCount();
-    if (stations.length === 0) {
+    const allStations = getAllStationsWithCount();
+    // 分成显示的和隐藏的
+    const visibleStations = allStations.filter(s =>
+      !settings.hiddenStations || !settings.hiddenStations.includes(s.name));
+    const hiddenStations = allStations.filter(s =>
+      settings.hiddenStations && settings.hiddenStations.includes(s.name));
+
+    if (allStations.length === 0) {
       listEl.innerHTML = '';
       emptyEl.style.display = 'block';
       return;
     }
     emptyEl.style.display = 'none';
 
-    listEl.innerHTML = stations.map(s => {
-      const aliasHtml = s.aliases.length > 0
-        ? `<div class="station-manage-alias">包含：${s.aliases.join('、')}</div>`
-        : '';
-      return `
-        <div class="station-manage-item">
-          <div class="station-manage-info">
-            <div class="station-manage-name">${escapeHtml(s.name)}</div>
-            <div class="station-manage-meta">${s.count} 个包裹</div>
-            ${aliasHtml}
+    let html = '';
+
+    // 显示中的驿站
+    if (visibleStations.length > 0) {
+      html += `<div class="station-manage-section-title">显示中的驿站（${visibleStations.length}）</div>`;
+      html += visibleStations.map(s => {
+        const aliasHtml = s.aliases.length > 0
+          ? `<div class="station-manage-alias">包含：${s.aliases.join('、')}</div>`
+          : '';
+        return `
+          <div class="station-manage-item">
+            <div class="station-manage-info">
+              <div class="station-manage-name">${escapeHtml(s.name)}</div>
+              <div class="station-manage-meta">${s.count} 个包裹</div>
+              ${aliasHtml}
+            </div>
+            <div class="station-manage-actions">
+              <button class="station-manage-btn" data-action="merge-station" data-name="${encodeURIComponent(s.name)}">
+                合并
+              </button>
+              <button class="station-manage-btn btn-warn" data-action="hide-station-manage" data-name="${encodeURIComponent(s.name)}">
+                隐藏
+              </button>
+            </div>
           </div>
-          <div class="station-manage-actions">
-            <button class="station-manage-btn" data-action="merge-station" data-name="${encodeURIComponent(s.name)}">
-              合并
-            </button>
+        `;
+      }).join('');
+    }
+
+    // 已隐藏的驿站
+    if (hiddenStations.length > 0) {
+      html += `<div class="station-manage-section-title">已隐藏的驿站（${hiddenStations.length}）</div>`;
+      html += hiddenStations.map(s => {
+        const aliasHtml = s.aliases.length > 0
+          ? `<div class="station-manage-alias">包含：${s.aliases.join('、')}</div>`
+          : '';
+        return `
+          <div class="station-manage-item station-hidden-item">
+            <div class="station-manage-info">
+              <div class="station-manage-name">${escapeHtml(s.name)}</div>
+              <div class="station-manage-meta">${s.count} 个包裹</div>
+              ${aliasHtml}
+            </div>
+            <div class="station-manage-actions">
+              <button class="station-manage-btn btn-primary" data-action="unhide-station" data-name="${encodeURIComponent(s.name)}">
+                恢复显示
+              </button>
+            </div>
           </div>
-        </div>
-      `;
-    }).join('');
+        `;
+      }).join('');
+    }
+
+    listEl.innerHTML = html;
 
     // 绑定事件
     listEl.querySelectorAll('[data-action="merge-station"]').forEach(btn => {
@@ -2555,6 +2820,29 @@
         e.stopPropagation();
         const stationName = decodeURIComponent(btn.dataset.name);
         openMergeStationModal(stationName);
+      });
+    });
+    listEl.querySelectorAll('[data-action="hide-station-manage"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const stationName = decodeURIComponent(btn.dataset.name);
+        showConfirmDialog(`确定要隐藏「${stationName}」吗？\n（数据不会删除，下次收到新快递时会自动恢复）`, () => {
+          if (!settings.hiddenStations) settings.hiddenStations = [];
+          if (!settings.hiddenStations.includes(stationName)) {
+            settings.hiddenStations.push(stationName);
+          }
+          saveSettings();
+          renderStationManageList();
+          renderAll();
+          showToast('已隐藏', 'success');
+        });
+      });
+    });
+    listEl.querySelectorAll('[data-action="unhide-station"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const stationName = decodeURIComponent(btn.dataset.name);
+        unhideStation(stationName);
       });
     });
   }
@@ -2833,6 +3121,13 @@
     const itemName = carrier ? (carrier + '快递') : '快递包裹';
     const source = smsData.source === 'notification' ? '通知来源' : '短信来源';
     const sourceApp = smsData.sourceApp || smsData.sender || '';
+
+    // 如果驿站是隐藏的，自动取消隐藏
+    if (stationName && settings.hiddenStations && settings.hiddenStations.includes(stationName)) {
+      const idx = settings.hiddenStations.indexOf(stationName);
+      if (idx !== -1) settings.hiddenStations.splice(idx, 1);
+      saveSettings();
+    }
 
     const newParcel = {
       id: generateId(),

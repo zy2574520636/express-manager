@@ -574,6 +574,129 @@ body {
   color: var(--success);
 }
 
+/* 精简驿站卡片（无待取件时只有一行） */
+.station-card-compact {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  opacity: 0.6;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.station-compact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.station-compact-icon {
+  font-size: 16px;
+  opacity: 0.7;
+}
+.station-compact-name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.station-compact-status {
+  font-size: 12px;
+  color: var(--success);
+  font-weight: 500;
+}
+
+/* 驿站编辑模式 */
+.station-edit-checkbox {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.station-edit-checkbox.checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.station-edit-checkbox.checked .station-checkbox-inner::after {
+  content: '✓';
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+.station-edit-mode .station-card {
+  padding-left: 44px !important;
+}
+.station-edit-mode .station-card-compact {
+  padding-left: 44px !important;
+}
+
+/* 驿站编辑底部操作栏 */
+.station-edit-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+  z-index: 1000;
+}
+.station-edit-count {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+}
+.btn-warn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+}
+
+/* 驿站管理分组标题 */
+.station-manage-section-title {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 8px 4px;
+  margin-top: 8px;
+}
+.station-manage-section-title:first-child {
+  margin-top: 0;
+}
+.station-hidden-item {
+  opacity: 0.6;
+  background: var(--bg-secondary);
+}
+
+/* 底部留白 */
+.main-content {
+  padding-bottom: 60px;
+}
+
 /* 批量签收按钮 */
 .station-action-bar {
   display: flex;
