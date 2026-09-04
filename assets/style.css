@@ -353,22 +353,34 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
+  gap: 12px;
 }
 .section-header h2 {
   font-size: 17px;
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .section-header-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+.btn-icon {
+  padding: 6px 10px;
+  font-size: 16px;
+  line-height: 1;
 }
 .count-badge {
   background: var(--bg);
   color: var(--muted);
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .select-sm {
   padding: 5px 28px 5px 10px;

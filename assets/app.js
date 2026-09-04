@@ -2605,7 +2605,13 @@
     selectedStationsForHide.clear();
     document.body.classList.add('station-edit-mode');
     // 给所有驿站卡片加复选框
-    document.querySelectorAll('.station-card').forEach(card => {
+    const cards = document.querySelectorAll('.station-card');
+    if (cards.length === 0) {
+      showToast('暂无可管理的驿站', 'warning');
+      exitStationEditMode();
+      return;
+    }
+    cards.forEach(card => {
       const stationName = decodeURIComponent(card.dataset.station || '');
       if (!stationName) return;
       const checkbox = document.createElement('div');
@@ -2619,6 +2625,7 @@
     });
     // 显示底部操作栏
     showStationEditBar();
+    showToast('已进入管理模式，勾选驿站后点"隐藏选中"', 'info');
   }
 
   function toggleStationSelect(stationName, checkboxEl) {
