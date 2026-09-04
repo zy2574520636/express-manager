@@ -250,11 +250,15 @@
 
       <!-- 模拟测试 -->
       <div class="settings-section">
-        <h4 class="settings-title">🧪 模拟测试
-          <span class="settings-tip" style="font-size:12px;font-weight:normal;color:var(--muted);margin-left:8px;">
-            不用真的收短信，点一下就能测试功能
-          </span>
-        </h4>
+        <div class="settings-collapse-header collapsed" id="mock-collapse-btn">
+          <h4 class="settings-title">🧪 模拟测试
+            <span class="settings-tip" style="font-size:12px;font-weight:normal;color:var(--muted);margin-left:8px;">
+              不用真的收短信，点一下就能测试功能
+            </span>
+          </h4>
+          <span class="collapse-arrow">▼</span>
+        </div>
+        <div class="settings-collapse-content" id="mock-collapse-content">
         <div class="clean-card">
           <div class="clean-info">
             <div class="clean-title">模拟收到快递短信</div>
@@ -275,6 +279,7 @@
             <div class="clean-desc">申通快递 · 取件码 9-3-4709 · 福鼎家园晓风苑31-5喵站</div>
           </div>
           <button class="btn btn-primary btn-sm" id="btn-mock-xhs">模拟</button>
+        </div>
         </div>
       </div>
 

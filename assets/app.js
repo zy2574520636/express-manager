@@ -664,9 +664,12 @@
       }
     }
 
+    const addDateStr = formatDate(new Date(p.createdAt).toISOString().split('T')[0]);
+
     const pickupCodeHtml = p.pickupCode ? `
       <div class="pickup-code-box" data-action="copy-code" data-code="${escapeHtml(p.pickupCode)}" title="点击复制取件码">
         <span class="pickup-code-label">📮 取件码</span>
+        <span class="pickup-code-date">${addDateStr}</span>
         <span class="pickup-code-value">${escapeHtml(p.pickupCode)}</span>
       </div>
     ` : '';
@@ -680,8 +683,11 @@
 
     return `
       <div class="parcel-card status-${escapeHtml(p.status)}${completedClass}${compactClass}" data-id="${p.id}">
-        <div class="swipe-bg">
+        <div class="swipe-bg swipe-bg-left">
           <span class="swipe-bg-text">✓ 已取件</span>
+        </div>
+        <div class="swipe-bg swipe-bg-right">
+          <span class="swipe-bg-text">🗑 删除</span>
         </div>
         <div class="parcel-content">
           <div class="parcel-top">
@@ -693,14 +699,6 @@
           </div>
           ${carrierHtml ? `<div class="parcel-meta">${carrierHtml}</div>` : ''}
           ${pickupCodeHtml}
-          <div class="parcel-bottom">
-            <span class="parcel-date">${dateText || ('添加于 ' + formatDate(new Date(p.createdAt).toISOString().split('T')[0]))}</span>
-            <div class="parcel-actions">
-              <button class="icon-btn" data-action="view" title="查看详情">👁</button>
-              <button class="icon-btn" data-action="edit" title="编辑">✏️</button>
-              <button class="icon-btn danger" data-action="delete" title="删除">🗑</button>
-            </div>
-          </div>
         </div>
       </div>
     `;
@@ -710,6 +708,22 @@
     const pendingParcels = station.parcels.filter(p => p.status !== '已取件' && p.status !== '已签收');
     const hasPending = pendingParcels.length > 0;
     const noPendingClass = hasPending ? '' : ' no-pending';
+
+    // 没有待取件时，显示精简卡片
+    if (!hasPending) {
+      return `
+        <div class="station-card station-card-compact${noPendingClass}" data-station="${encodeURIComponent(station.name)}">
+          <div class="station-compact-row">
+            <span class="station-compact-icon">🏪</span>
+            <span class="station-compact-name">${escapeHtml(station.name)}</span>
+            <div class="station-compact-stat">
+              <span class="compact-stat-num">0</span>
+              <span class="compact-stat-label">待取件</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     // 待取件：按状态优先级排序，待取件最前
     pendingParcels.sort((a, b) => {
@@ -731,11 +745,9 @@
       </div>
     ` : '';
 
-    const pendingHtml = hasPending
-      ? `<div class="parcel-group">
+    const pendingHtml = `<div class="parcel-group">
            ${pendingParcels.map(p => renderParcelCard(p, true)).join('')}
-         </div>`
-      : '<div class="no-parcels-tip">暂无待取件 🎉</div>';
+         </div>`;
 
     return `
       <div class="station-card${noPendingClass}" data-station="${encodeURIComponent(station.name)}">
@@ -1167,6 +1179,29 @@
       renderAll();
       vibrate([30, 20, 30]);
       showToast(`「${parcel.itemName}」已标记为已取件 ✓`, 'success');
+    }, 300);
+  }
+
+  // 左滑删除
+  function deleteParcelBySwipe(id, cardEl) {
+    const index = parcels.findIndex(p => p.id === id);
+    if (index === -1) return;
+    const parcel = parcels[index];
+
+    // 卡片滑出动画
+    if (cardEl) {
+      cardEl.style.transition = 'transform 0.3s ease, opacity 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease';
+      cardEl.style.transform = `translateX(-${cardEl.offsetWidth}px)`;
+      cardEl.style.opacity = '0';
+    }
+
+    // 延迟更新数据，等动画播完
+    setTimeout(() => {
+      parcels = parcels.filter(p => p.id !== id);
+      saveData();
+      renderAll();
+      vibrate([40]);
+      showToast(`「${parcel.itemName}」已删除`, 'success');
     }, 300);
   }
 
@@ -1728,9 +1763,6 @@
     function onSwipeStart(e, x, y) {
       const card = e.target.closest('.parcel-card');
       if (!card) return;
-      // 已取件的不支持右滑（右滑是签收操作）
-      const status = card.classList.contains('status-已取件') || card.classList.contains('status-已签收');
-      if (status) return;
       swipingCard = card;
       swipeStartX = x;
       swipeStartY = y;
@@ -1781,18 +1813,38 @@
 
       if (swipeMoved) {
         e.preventDefault && e.preventDefault();
-        // 只允许向右滑（正数），最大滑到卡片宽度的60%
-        const translateX = Math.max(0, Math.min(dx, swipingCard.offsetWidth * 0.6));
+        const cardWidth = swipingCard.offsetWidth;
+        // 限制滑动范围：向右最多60%（签收），向左最多60%（删除）
+        const translateX = Math.max(-cardWidth * 0.6, Math.min(dx, cardWidth * 0.6));
         const content = swipingCard.querySelector('.parcel-content');
         if (content) content.style.transform = `translateX(${translateX}px)`;
+
         // 更新背景提示
-        const bg = swipingCard.querySelector('.swipe-bg');
-        if (bg) {
-          const threshold = swipingCard.offsetWidth * 0.3;
-          if (translateX > threshold) {
-            bg.classList.add('ready');
-          } else {
-            bg.classList.remove('ready');
+        const bgLeft = swipingCard.querySelector('.swipe-bg-left');
+        const bgRight = swipingCard.querySelector('.swipe-bg-right');
+        const threshold = cardWidth * 0.3;
+
+        if (translateX > 0) {
+          // 右滑 - 签收
+          if (bgLeft) bgLeft.style.opacity = Math.min(1, Math.abs(translateX) / threshold);
+          if (bgRight) bgRight.style.opacity = '0';
+          if (bgLeft) {
+            if (translateX > threshold) {
+              bgLeft.classList.add('ready');
+            } else {
+              bgLeft.classList.remove('ready');
+            }
+          }
+        } else if (translateX < 0) {
+          // 左滑 - 删除
+          if (bgRight) bgRight.style.opacity = Math.min(1, Math.abs(translateX) / threshold);
+          if (bgLeft) bgLeft.style.opacity = '0';
+          if (bgRight) {
+            if (Math.abs(translateX) > threshold) {
+              bgRight.classList.add('ready');
+            } else {
+              bgRight.classList.remove('ready');
+            }
           }
         }
       }
@@ -1807,7 +1859,7 @@
         longPressTimer = null;
       }
 
-      // 如果长按触发了，不处理右滑
+      // 如果长按触发了，不处理滑动
       if (longPressTriggered) {
         isSwiping = false;
         swipingCard = null;
@@ -1822,6 +1874,10 @@
         // 右滑成功 - 标记已取件
         const id = card.dataset.id;
         completeParcelBySwipe(id, card);
+      } else if (dx < -threshold && swipeMoved) {
+        // 左滑成功 - 删除
+        const id = card.dataset.id;
+        deleteParcelBySwipe(id, card);
       } else {
         // 回弹
         resetSwipe(card);
@@ -1837,8 +1893,16 @@
       const content = card.querySelector('.parcel-content');
       if (content) content.style.transform = '';
       card.classList.remove('swiping', 'swiped');
-      const bg = card.querySelector('.swipe-bg');
-      if (bg) bg.classList.remove('ready');
+      const bgLeft = card.querySelector('.swipe-bg-left');
+      const bgRight = card.querySelector('.swipe-bg-right');
+      if (bgLeft) {
+        bgLeft.classList.remove('ready');
+        bgLeft.style.opacity = '';
+      }
+      if (bgRight) {
+        bgRight.classList.remove('ready');
+        bgRight.style.opacity = '';
+      }
     }
 
     // 触屏事件
@@ -2099,6 +2163,24 @@
           } else {
             content.classList.add('expanded');
             monitorCollapseBtn.classList.remove('collapsed');
+          }
+        }
+      });
+    }
+
+    // 模拟测试折叠面板
+    const mockCollapseBtn = document.getElementById('mock-collapse-btn');
+    if (mockCollapseBtn) {
+      mockCollapseBtn.addEventListener('click', () => {
+        const content = document.getElementById('mock-collapse-content');
+        if (content) {
+          const isExpanded = content.classList.contains('expanded');
+          if (isExpanded) {
+            content.classList.remove('expanded');
+            mockCollapseBtn.classList.add('collapsed');
+          } else {
+            content.classList.add('expanded');
+            mockCollapseBtn.classList.remove('collapsed');
           }
         }
       });
@@ -3268,5 +3350,86 @@
   } else {
     init();
   }
+
+  // ===== 返回键/手势返回支持 =====
+  // 弹窗打开时 push 一条历史记录，返回时 pop 自动关闭最上层弹窗
+  const modalStack = [];
+
+  function pushModalState(name, closeFn) {
+    modalStack.push({ name, closeFn });
+    try {
+      history.pushState({ modal: name }, '', '');
+    } catch (e) {}
+  }
+
+  function popModalState() {
+    if (modalStack.length > 0) {
+      const top = modalStack.pop();
+      try {
+        if (history.state && history.state.modal) {
+          history.back();
+        }
+      } catch (e) {}
+      return top;
+    }
+    return null;
+  }
+
+  function handleBackPress() {
+    // 按优先级关闭最上层的弹窗
+    // 1. 确认对话框
+    const confirmDialog = document.getElementById('confirm-dialog');
+    if (confirmDialog && confirmDialog.style.display === 'flex') {
+      const cancelBtn = document.getElementById('confirm-dialog-cancel');
+      if (cancelBtn) cancelBtn.click();
+      return true;
+    }
+    // 2. 驿站管理弹窗里的合并子弹窗
+    const mergeModal = document.getElementById('station-merge-modal');
+    if (mergeModal && mergeModal.style.display === 'flex') {
+      closeMergePopup();
+      return true;
+    }
+    // 3. 驿站管理弹窗
+    const stationManageModal = document.getElementById('station-manage-modal');
+    if (stationManageModal && stationManageModal.style.display === 'flex') {
+      closeStationManagePopup();
+      return true;
+    }
+    // 4. 编辑弹窗
+    if (els.modalOverlay && els.modalOverlay.style.display === 'flex') {
+      closeModal();
+      return true;
+    }
+    // 5. 详情弹窗
+    if (els.detailOverlay && els.detailOverlay.style.display === 'flex') {
+      closeDetail();
+      return true;
+    }
+    // 6. 使用说明弹窗
+    const usageModal = document.getElementById('usage-modal');
+    if (usageModal && usageModal.style.display === 'flex') {
+      usageModal.style.display = 'none';
+      return true;
+    }
+    // 7. 设置弹窗
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal && settingsModal.style.display === 'flex') {
+      closeSettingsModal();
+      return true;
+    }
+    return false;
+  }
+
+  window.addEventListener('popstate', (e) => {
+    const handled = handleBackPress();
+    if (handled) {
+      // 阻止默认行为
+      e.preventDefault && e.preventDefault();
+    }
+  });
+
+  // 暴露给 Android 调用
+  window.handleBackPress = handleBackPress;
 
 })();

@@ -1,12 +1,12 @@
 {
-  "versionCode": 21,
-  "versionName": "1.7.2",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
+  "versionCode": 22,
+  "versionName": "1.8.0",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.7.2/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.0/express-manager.apk"
   ],
-  "changelog": "🎯 今日待取小蓝条常驻\n\n1. 顶部「今日待取」蓝色横幅一直显示，取完后数字变成0\n2. 没有待取件时显示「暂无待取快递 🎉」"
+  "changelog": "✨ 快递卡片大改版 + 返回键支持\n\n1. 快递卡片精简：移除底部详情/编辑/删除按钮，点击卡片看详情\n2. 取件码右上角显示录入时间，更紧凑\n3. 左滑删除（红色背景），右滑签收（绿色背景）\n4. 没有待取件的驿站显示精简卡片（0待取件）\n5. 设置里模拟测试模块默认收起，更清爽\n6. 支持手机返回键/手势返回，逐层关闭弹窗"
 }
