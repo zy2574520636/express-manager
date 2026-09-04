@@ -1,6 +1,6 @@
 {
-  "versionCode": 6,
-  "versionName": "1.3.2",
-  "apkUrl": "https://github.com/zy2574520636/express-manager/releases/download/v1.3.2/express-manager.apk",
-  "changelog": "1. 修复下载更新失败问题（改用APP内直接下载，绕过第三方下载器拦截）\n2. 修复驿站包裹标题区布局拥挤问题\n3. 管理按钮改成图标样式，更省空间\n4. 进入管理模式有明确提示\n5. APP每天自动检查更新"
+  "versionCode": 7,
+  "versionName": "1.3.3",
+  "apkUrl": "https://github.com/zy2574520636/express-manager/releases/download/v1.3.3/express-manager.apk",
+  "changelog": "1. 修复下载完成后无法自动弹出安装界面的问题\n2. 改用APP内直接下载，绕过第三方下载器拦截\n3. 修复驿站包裹标题区布局拥挤问题\n4. 管理按钮改成图标样式，更省空间\n5. APP每天自动检查更新"
 }
