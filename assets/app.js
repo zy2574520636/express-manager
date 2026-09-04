@@ -1545,6 +1545,10 @@
       ${stationSection}
 
       <div class="detail-item">
+        <div class="detail-label">快递公司</div>
+        <div class="detail-value">${escapeHtml(p.carrier) || '-'}</div>
+      </div>
+      <div class="detail-item">
         <div class="detail-label">快递单号</div>
         <div class="detail-value" style="font-family:monospace;">${escapeHtml(p.trackingNumber) || '-'}</div>
       </div>
