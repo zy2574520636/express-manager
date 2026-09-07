@@ -1,12 +1,12 @@
 {
-  "versionCode": 27,
-  "versionName": "1.8.5",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
+  "versionCode": 28,
+  "versionName": "1.8.6",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk"
   ],
-  "changelog": "🐛 修复圆通快递等识别失败问题\n\n1. 快递公司列表补充：圆通快递、顺丰快递、极兔快递、京东快递、邮政快递\n2. 修复\"圆通\"后跟\"快递+数字\"被误判为驿站名而过滤的问题\n3. 同一位置优先取更长的快递公司名（如\"圆通快递\"优先于\"圆通\"）\n4. 修复itemName出现\"圆通快递快递\"重复的问题"
+  "changelog": "🐛 修复通知取件码识别失败\n\n1. 支持「取件码『3-2-3826』」括号格式识别（JS+Java双端）\n2. Java端快递公司列表同步：补充圆通快递、顺丰快递、极兔快递等\n3. Java端修复\"快递+数字\"被误判为驿站名的问题\n4. Java端修复itemName出现\"圆通快递快递\"重复的问题\n5. Java端驿站识别同步支持\"存入/已存入\"格式"
 }
