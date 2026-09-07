@@ -1,12 +1,12 @@
 {
-  "versionCode": 34,
-  "versionName": "1.9.2",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
+  "versionCode": 35,
+  "versionName": "1.9.3",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.3/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.3/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.3/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.3/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.9.3/express-manager.apk"
   ],
-  "changelog": "🐛 彻底修复短信扫描范围不准的问题\n\n1. 不再依赖数据库 DATE 字段做 where 过滤，改为读取后在内存中按时间筛选\n2. 自动识别时间戳单位（秒/毫秒），兼容所有手机\n3. 最多扫描 500 条，保证速度\n4. 解决了 1天/3天 查不到但 7天 能查到的诡异问题"
+  "changelog": "🐛 短信扫描调试版\n\n1. Toast 提示增加调试信息：收件箱总短信数、起始时间戳、最新短信时间样本\n2. 用 getString 替代 getLong 读取 DATE 字段，避免某些手机上的兼容问题\n3. 去掉 LIMIT 和提前退出逻辑，确保不遗漏短信\n4. 请把提示里的 debug 数字告诉我，方便定位问题"
 }

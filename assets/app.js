@@ -1752,6 +1752,13 @@
             if (data.list && Array.isArray(data.list)) {
               smsResults = data.list;
             }
+            // 调试信息
+            smsResults._debug = {
+              startMs: data.startMs || 0,
+              dateSample: data.dateSample || '0',
+              dateUnit: data.dateUnit || '?',
+              totalInBox: data.totalSmsInBox || 0
+            };
           }
         }
       } catch (e) {
@@ -1863,9 +1870,15 @@
       // 反馈
       const days = settings.scanRangeDays || 1;
       const detail = `短信${smsTotal}条/通知${notifTotal}条`;
+      // 调试信息
+      let debugInfo = '';
+      if (smsResults._debug) {
+        const d = smsResults._debug;
+        debugInfo = ` [收件箱${d.totalInBox}条, 起始=${d.startMs}, 样本=${d.dateSample}]`;
+      }
       if (addedCount === 0) {
         if (allResults.length === 0) {
-          showToast(`未识别到快递（${detail}）`, 'info');
+          showToast(`未识别到快递（${detail}）${debugInfo}`, 'info');
         } else {
           showToast(`所有快递已存在，无新增（${detail}）`, 'info');
         }
