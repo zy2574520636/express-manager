@@ -1720,8 +1720,14 @@
 
     // 用 setTimeout 让 UI 先更新，再执行同步扫描
     setTimeout(() => {
-      doScan();
-      if (btn) btn.classList.remove('scanning');
+      try {
+        doScan();
+      } catch (e) {
+        console.error('scanExpress error:', e);
+        showToast('识别失败：' + e.message, 'error');
+      } finally {
+        if (btn) btn.classList.remove('scanning');
+      }
     }, 50);
 
     function doScan() {
@@ -1732,7 +1738,7 @@
 
       // 扫描今日短信
       try {
-        if (typeof window.AndroidBridge.scanTodaySms === 'function') {
+        if (window.AndroidBridge.scanTodaySms) {
           const raw = window.AndroidBridge.scanTodaySms();
           const arr = JSON.parse(raw || '[]');
           arr.forEach(item => {
@@ -1749,7 +1755,7 @@
 
       // 扫描当前通知
       try {
-        if (typeof window.AndroidBridge.scanActiveNotifications === 'function') {
+        if (window.AndroidBridge.scanActiveNotifications) {
           const raw = window.AndroidBridge.scanActiveNotifications();
           const arr = JSON.parse(raw || '[]');
           arr.forEach(item => {

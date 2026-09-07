@@ -1,12 +1,12 @@
 {
-  "versionCode": 29,
-  "versionName": "1.8.7",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
+  "versionCode": 30,
+  "versionName": "1.8.8",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.8/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.8/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.8/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.8/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.8/express-manager.apk"
   ],
-  "changelog": "🔍 新增一键识别快递功能\n\n1. 顶部新增🔍按钮，一键扫描今日短信和当前通知中的快递信息\n2. 自动解析取件码、驿站名称、快递公司，按取件码去重\n3. 支持权限引导：缺少短信/通知权限时提示用户开启\n4. 配合「待确认入库」设置：扫描结果可先待确认再入库\n5. 扫描完成有震动反馈和Toast提示"
+  "changelog": "🔧 修复一键识别功能失效\n\n1. 修复 WebView 中 typeof 检查导致 Java 方法无法调用的问题\n2. 添加全局错误捕获，避免扫描失败时静默无反馈\n3. 优化按钮扫描动画，确保异常时也能恢复正常状态"
 }
