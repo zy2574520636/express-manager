@@ -306,7 +306,8 @@
     monitorApps: {},   // 监听的APP列表，{包名: true/false}，默认全不选
     stationAliases: {},  // 驿站别名映射 {别名: 标准名}，用于合并同名驿站
     hiddenStations: [],  // 已隐藏的驿站列表（只是不显示，数据保留，收到新快递自动恢复）
-    pendingConfirmEnabled: false // 新快递先待确认再入库
+    pendingConfirmEnabled: false, // 新快递先待确认再入库
+    scanRangeDays: 1 // 一键识别短信扫描范围（天），默认1天
   };
 
   // 支持监听的APP列表
@@ -1739,7 +1740,8 @@
       // 扫描今日短信
       try {
         if (window.AndroidBridge.scanTodaySms) {
-          const raw = window.AndroidBridge.scanTodaySms();
+          const days = settings.scanRangeDays || 1;
+          const raw = window.AndroidBridge.scanTodaySms(days);
           const arr = JSON.parse(raw || '[]');
           arr.forEach(item => {
             if (item.error) {
@@ -2250,6 +2252,16 @@
           showToast('已关闭：新快递直接入库', 'success');
         }
         renderPendingConfirmBar();
+      });
+    }
+
+    // 一键识别扫描范围
+    const scanRangeSelect = document.getElementById('scan-range');
+    if (scanRangeSelect) {
+      scanRangeSelect.addEventListener('change', (e) => {
+        settings.scanRangeDays = parseInt(e.target.value, 10) || 1;
+        saveSettings();
+        showToast(`扫描范围已设为 ${settings.scanRangeDays} 天`, 'success');
       });
     }
 
@@ -3364,6 +3376,8 @@
     updateSettingsStats();
     document.getElementById('vibration-toggle').checked = settings.vibration;
     document.getElementById('pending-confirm-toggle').checked = settings.pendingConfirmEnabled;
+    const scanRangeSelect = document.getElementById('scan-range');
+    if (scanRangeSelect) scanRangeSelect.value = settings.scanRangeDays || 1;
     document.getElementById('auto-clean-toggle').checked = settings.autoClean;
     document.getElementById('retention-days').value = settings.retentionDays;
     updateRetentionDesc();
