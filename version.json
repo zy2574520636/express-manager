@@ -1,12 +1,12 @@
 {
-  "versionCode": 28,
-  "versionName": "1.8.6",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
+  "versionCode": 29,
+  "versionName": "1.8.7",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.6/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.7/express-manager.apk"
   ],
-  "changelog": "🐛 修复通知取件码识别失败\n\n1. 支持「取件码『3-2-3826』」括号格式识别（JS+Java双端）\n2. Java端快递公司列表同步：补充圆通快递、顺丰快递、极兔快递等\n3. Java端修复\"快递+数字\"被误判为驿站名的问题\n4. Java端修复itemName出现\"圆通快递快递\"重复的问题\n5. Java端驿站识别同步支持\"存入/已存入\"格式"
+  "changelog": "🔍 新增一键识别快递功能\n\n1. 顶部新增🔍按钮，一键扫描今日短信和当前通知中的快递信息\n2. 自动解析取件码、驿站名称、快递公司，按取件码去重\n3. 支持权限引导：缺少短信/通知权限时提示用户开启\n4. 配合「待确认入库」设置：扫描结果可先待确认再入库\n5. 扫描完成有震动反馈和Toast提示"
 }

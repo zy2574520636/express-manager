@@ -338,6 +338,7 @@
   function initEls() {
     els.btnSettings = document.getElementById('btn-settings');
     els.btnAdd = document.getElementById('btn-add');
+    els.btnScan = document.getElementById('btn-scan');
     els.btnExport = document.getElementById('btn-export');
     els.btnImport = document.getElementById('btn-import');
     els.fileImport = document.getElementById('file-import');
@@ -1706,11 +1707,174 @@
     reader.readAsText(file);
   }
 
+  // ===== 一键识别快递 =====
+  function scanExpress() {
+    if (!window.AndroidBridge) {
+      showToast('请在APP中使用此功能', 'warning');
+      return;
+    }
+
+    // 添加扫描动画
+    const btn = els.btnScan;
+    if (btn) btn.classList.add('scanning');
+
+    // 用 setTimeout 让 UI 先更新，再执行同步扫描
+    setTimeout(() => {
+      doScan();
+      if (btn) btn.classList.remove('scanning');
+    }, 50);
+
+    function doScan() {
+      let smsResults = [];
+      let notifResults = [];
+      let smsError = null;
+      let notifError = null;
+
+      // 扫描今日短信
+      try {
+        if (typeof window.AndroidBridge.scanTodaySms === 'function') {
+          const raw = window.AndroidBridge.scanTodaySms();
+          const arr = JSON.parse(raw || '[]');
+          arr.forEach(item => {
+            if (item.error) {
+              smsError = item.error;
+            } else {
+              smsResults.push(item);
+            }
+          });
+        }
+      } catch (e) {
+        console.error('scanTodaySms error:', e);
+      }
+
+      // 扫描当前通知
+      try {
+        if (typeof window.AndroidBridge.scanActiveNotifications === 'function') {
+          const raw = window.AndroidBridge.scanActiveNotifications();
+          const arr = JSON.parse(raw || '[]');
+          arr.forEach(item => {
+            if (item.error) {
+              notifError = item.error;
+            } else {
+              notifResults.push(item);
+            }
+          });
+        }
+      } catch (e) {
+        console.error('scanActiveNotifications error:', e);
+      }
+
+      // 处理权限错误
+      const needSmsPermission = smsError === 'no_permission';
+      const needNotifyPermission = notifError === 'no_permission';
+
+      if (needSmsPermission || needNotifyPermission) {
+        let msg = '扫描需要以下权限：';
+        if (needSmsPermission) msg += '\n- 短信读取权限';
+        if (needNotifyPermission) msg += '\n- 通知访问权限';
+
+        showConfirmDialog(msg, {
+          icon: '🔐',
+          okText: '去开启',
+          cancelText: '稍后'
+        }).then(ok => {
+          if (ok) {
+            if (needSmsPermission && window.AndroidBridge.requestSmsPermission) {
+              window.AndroidBridge.requestSmsPermission();
+            }
+            if (needNotifyPermission && window.AndroidBridge.openNotificationListenerSettings) {
+              window.AndroidBridge.openNotificationListenerSettings();
+            }
+          }
+        });
+        return;
+      }
+
+      // 合并结果并去重
+      const allResults = [...smsResults, ...notifResults];
+      const seenCodes = new Set();
+
+      // 收集已有的取件码
+      parcels.forEach(p => {
+        if (p.pickupCode) seenCodes.add(p.pickupCode);
+      });
+      pendingParcels.forEach(p => {
+        if (p.pickupCode) seenCodes.add(p.pickupCode);
+      });
+
+      let addedCount = 0;
+      const newParcels = [];
+      const newPending = [];
+      allResults.forEach(item => {
+        const code = item.pickupCode || '';
+        if (!code) return;
+        if (seenCodes.has(code)) return;
+        seenCodes.add(code);
+
+        const parcel = {
+          id: generateId(),
+          itemName: item.itemName || '快递包裹',
+          trackingNumber: item.trackingNumber || '',
+          carrier: item.carrier || '',
+          status: '待取件',
+          pickupCode: code,
+          stationName: item.stationName || '',
+          stationAddress: item.stationAddress || '',
+          notes: '',
+          source: item.source || '',
+          sourceApp: item.sourceApp || '',
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        };
+
+        if (settings.pendingConfirmEnabled) {
+          newPending.push(parcel);
+        } else {
+          newParcels.push(parcel);
+        }
+        addedCount++;
+      });
+
+      // 保存
+      if (newParcels.length > 0) {
+        parcels.unshift(...newParcels);
+        saveData();
+      }
+      if (newPending.length > 0) {
+        pendingParcels.push(...newPending);
+        savePendingParcels();
+      }
+
+      renderAll();
+      if (settings.pendingConfirmEnabled) renderPendingConfirmBar();
+
+      // 反馈
+      if (addedCount === 0) {
+        if (allResults.length === 0) {
+          showToast('未识别到快递信息', 'info');
+        } else {
+          showToast('所有快递已存在，无新增', 'info');
+        }
+      } else {
+        const msg = settings.pendingConfirmEnabled
+          ? `识别到 ${addedCount} 个新快递，待确认入库`
+          : `识别到 ${addedCount} 个新快递，已入库`;
+        showToast(msg, 'success');
+        vibrate([100, 50, 100]);
+      }
+    }
+  }
+
   // ===== 事件绑定 =====
   function bindEvents() {
     // 添加按钮
     els.btnAdd.addEventListener('click', openAddModal);
     window.openAddModal = openAddModal;
+
+    // 一键识别快递
+    if (els.btnScan) {
+      els.btnScan.addEventListener('click', scanExpress);
+    }
 
     // 粘贴识别按钮
     if (els.btnPasteRecognize) {
