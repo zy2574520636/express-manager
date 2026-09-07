@@ -1,12 +1,12 @@
 {
-  "versionCode": 31,
-  "versionName": "1.8.9",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.9/express-manager.apk",
+  "versionCode": 32,
+  "versionName": "1.9.0",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.0/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.9/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.9/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.9/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.9/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.0/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.0/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.0/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.9.0/express-manager.apk"
   ],
-  "changelog": "🔍 一键识别新增扫描范围设置\n\n1. 设置页新增「一键识别扫描范围」选项，支持 1 天 / 3 天 / 7 天\n2. 仅对短信扫描生效，通知不受此限制（通知栏有多少扫多少）\n3. 默认 1 天，可在设置中自行调整"
+  "changelog": "🔍 一键识别增加扫描统计\n\n1. 扫描结果显示「短信X条/通知Y条」统计，方便排查问题\n2. 如果扫不到快递，先看一下统计数字就知道是权限问题、没短信还是解析问题\n3. 修复 Java 端返回格式，增加 totalSms / totalNotif / expressCount 字段"
 }

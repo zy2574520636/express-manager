@@ -1736,20 +1736,23 @@
       let notifResults = [];
       let smsError = null;
       let notifError = null;
+      let smsTotal = 0;
+      let notifTotal = 0;
 
       // 扫描今日短信
       try {
         if (window.AndroidBridge.scanTodaySms) {
           const days = settings.scanRangeDays || 1;
           const raw = window.AndroidBridge.scanTodaySms(days);
-          const arr = JSON.parse(raw || '[]');
-          arr.forEach(item => {
-            if (item.error) {
-              smsError = item.error;
-            } else {
-              smsResults.push(item);
+          const data = JSON.parse(raw || '{}');
+          if (data.error) {
+            smsError = data.error;
+          } else {
+            smsTotal = data.totalSms || 0;
+            if (data.list && Array.isArray(data.list)) {
+              smsResults = data.list;
             }
-          });
+          }
         }
       } catch (e) {
         console.error('scanTodaySms error:', e);
@@ -1759,14 +1762,15 @@
       try {
         if (window.AndroidBridge.scanActiveNotifications) {
           const raw = window.AndroidBridge.scanActiveNotifications();
-          const arr = JSON.parse(raw || '[]');
-          arr.forEach(item => {
-            if (item.error) {
-              notifError = item.error;
-            } else {
-              notifResults.push(item);
+          const data = JSON.parse(raw || '{}');
+          if (data.error) {
+            notifError = data.error;
+          } else {
+            notifTotal = data.totalNotif || 0;
+            if (data.list && Array.isArray(data.list)) {
+              notifResults = data.list;
             }
-          });
+          }
         }
       } catch (e) {
         console.error('scanActiveNotifications error:', e);
@@ -1857,16 +1861,18 @@
       if (settings.pendingConfirmEnabled) renderPendingConfirmBar();
 
       // 反馈
+      const days = settings.scanRangeDays || 1;
+      const detail = `短信${smsTotal}条/通知${notifTotal}条`;
       if (addedCount === 0) {
         if (allResults.length === 0) {
-          showToast('未识别到快递信息', 'info');
+          showToast(`未识别到快递（${detail}）`, 'info');
         } else {
-          showToast('所有快递已存在，无新增', 'info');
+          showToast(`所有快递已存在，无新增（${detail}）`, 'info');
         }
       } else {
         const msg = settings.pendingConfirmEnabled
-          ? `识别到 ${addedCount} 个新快递，待确认入库`
-          : `识别到 ${addedCount} 个新快递，已入库`;
+          ? `识别到 ${addedCount} 个新快递，待确认入库（${detail}）`
+          : `识别到 ${addedCount} 个新快递，已入库（${detail}）`;
         showToast(msg, 'success');
         vibrate([100, 50, 100]);
       }
