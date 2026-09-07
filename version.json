@@ -1,12 +1,12 @@
 {
-  "versionCode": 33,
-  "versionName": "1.9.1",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.1/express-manager.apk",
+  "versionCode": 34,
+  "versionName": "1.9.2",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.1/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.1/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.1/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.9.1/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.9.2/express-manager.apk"
   ],
-  "changelog": "🐛 修复短信扫描可能返回0条的问题\n\n1. 自动探测短信数据库 DATE 字段的单位（秒/毫秒），兼容不同手机\n2. 部分定制ROM的短信数据库存的是秒级时间戳，之前用毫秒查导致一条都匹配不到\n3. 现在会先取一条短信检测单位，再用正确的单位查询"
+  "changelog": "🐛 彻底修复短信扫描范围不准的问题\n\n1. 不再依赖数据库 DATE 字段做 where 过滤，改为读取后在内存中按时间筛选\n2. 自动识别时间戳单位（秒/毫秒），兼容所有手机\n3. 最多扫描 500 条，保证速度\n4. 解决了 1天/3天 查不到但 7天 能查到的诡异问题"
 }
