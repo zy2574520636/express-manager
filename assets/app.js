@@ -17,9 +17,9 @@
 
     // 常见快递公司关键词
     const carriers = [
-      '顺丰速运', '顺丰', '中通快递', '中通', '圆通速递', '圆通',
-      '申通快递', '申通', '韵达快递', '韵达', '极兔速递', '极兔',
-      '京东物流', '京东', '邮政EMS', 'EMS', '邮政', '百世快递', '百世',
+      '顺丰速运', '顺丰快递', '顺丰', '中通快递', '中通', '圆通速递', '圆通快递', '圆通',
+      '申通快递', '申通', '韵达快递', '韵达', '极兔速递', '极兔快递', '极兔',
+      '京东物流', '京东快递', '京东', '邮政EMS', 'EMS', '邮政快递', '邮政', '百世快递', '百世',
       '菜鸟速递', '丹鸟', '德邦', '安能', '天天快递', '天天'
     ];
 
@@ -195,7 +195,13 @@
         // 检查这个位置后面是不是跟着驿站相关的词
         const afterIdx = idx + c.length;
         const suffix = t.substring(afterIdx, afterIdx + 5);
-        const isStationSuffix = /^(驿站|站点|快递|超市|柜|点|中心|门店|服务|驿站)/.test(suffix);
+        // 如果"快递"后跟数字（单号）→ 是快递公司名，不是驿站
+        let isStationSuffix = false;
+        if (/^快递[\d]/.test(suffix)) {
+          isStationSuffix = false;
+        } else {
+          isStationSuffix = /^(驿站|站点|快递|超市|柜|点|中心|门店|服务)/.test(suffix);
+        }
 
         // 如果后面跟着驿站相关词，说明是驿站名的一部分，不算快递公司
         if (!isStationSuffix) {
@@ -215,9 +221,12 @@
       }
     }
 
-    // 取位置最靠前的作为快递公司（通常快递名会出现在比较前面）
+    // 取位置最靠前的作为快递公司；同一位置取更长的名称（如"圆通快递"优先于"圆通"）
     if (carrierCandidates.length > 0) {
-      carrierCandidates.sort((a, b) => a.index - b.index);
+      carrierCandidates.sort((a, b) => {
+        if (a.index !== b.index) return a.index - b.index;
+        return b.name.length - a.name.length;
+      });
       result.carrier = carrierCandidates[0].name;
     }
 
@@ -1101,7 +1110,7 @@
     }
 
     const data = {
-      itemName: carrier ? (carrier + '快递') : '快递包裹',
+      itemName: carrier ? (/(快递|速运|速递|物流)$/.test(carrier) ? carrier : carrier + '快递') : '快递包裹',
       trackingNumber: '',
       carrier: carrier,
       status: '待取件',
@@ -3333,7 +3342,7 @@
 
     const stationName = smsData.stationName || smsData.location || '';
     const carrier = smsData.carrier || '';
-    const itemName = carrier ? (carrier + '快递') : '快递包裹';
+    const itemName = carrier ? (/(快递|速运|速递|物流)$/.test(carrier) ? carrier : carrier + '快递') : '快递包裹';
     const source = smsData.source === 'notification' ? '通知来源' : '短信来源';
     const sourceApp = smsData.sourceApp || smsData.sender || '';
 

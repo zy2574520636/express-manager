@@ -1,12 +1,12 @@
 {
-  "versionCode": 26,
-  "versionName": "1.8.4",
-  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.4/express-manager.apk",
+  "versionCode": 27,
+  "versionName": "1.8.5",
+  "apkUrl": "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
   "apkUrls": [
-    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.4/express-manager.apk",
-    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.4/express-manager.apk",
-    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.4/express-manager.apk",
-    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.4/express-manager.apk"
+    "https://ghproxy.net/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
+    "https://gh.api.99988866.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
+    "https://github.moeyy.xyz/https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk",
+    "https://github.com/zy2574520636/express-manager/releases/download/v1.8.5/express-manager.apk"
   ],
-  "changelog": "🐛 修复识别bug + 详情页点击改名称\n\n1. 修复取件码标签图标显示异常（去掉emoji，改用纯文字）\n2. 修复驿站名称识别错误：支持\"存入/已存入\"格式，避免整句话都塞进驿站名\n3. 新增：详情页点击顶部标题可直接修改快递名称\n4. 详情页保留快递公司字段"
+  "changelog": "🐛 修复圆通快递等识别失败问题\n\n1. 快递公司列表补充：圆通快递、顺丰快递、极兔快递、京东快递、邮政快递\n2. 修复\"圆通\"后跟\"快递+数字\"被误判为驿站名而过滤的问题\n3. 同一位置优先取更长的快递公司名（如\"圆通快递\"优先于\"圆通\"）\n4. 修复itemName出现\"圆通快递快递\"重复的问题"
 }
